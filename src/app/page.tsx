@@ -38,7 +38,9 @@ export default function Home() {
     });
     const text = await res.text();
     setIsLoading(false);
-    setVideoUrl(text);
+    setVideoUrl(
+      "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
+    );
     setVideoKey(Date.now());
   };
 
