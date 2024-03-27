@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       },
       { role: "user", content: inputText },
     ],
-    model: "gpt-3.5-turbo-0125",
+    model: "gpt-4-0125-preview",
   });
 
   const content = completion.choices[0].message.content;
