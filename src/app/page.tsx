@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-
+import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import LoadingType from "@/components/LoadingType";
 export default function Home() {
@@ -8,7 +8,7 @@ export default function Home() {
   const [inputText, setInputText] = useState("");
   const [videoMuted, setVideoMuted] = useState(true);
   const [videoUrl, setVideoUrl] = useState(
-    "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
+    "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH3.mp4"
   );
   const [videoKey, setVideoKey] = useState(Date.now()); // Initial key
   const [creditCount, setCreditCount] = useState(3);
@@ -42,15 +42,19 @@ export default function Home() {
     setVideoKey(Date.now());
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     if (creditCount > 0) {
       setCreditCount(creditCount - 1);
       await handleClick();
       setInputText("");
     }
   };
-
+  const handleKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      await handleSubmit();
+    }
+  };
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
@@ -60,7 +64,7 @@ export default function Home() {
 
   const handleVideoEnd = () => {
     setVideoUrl(
-      "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
+      "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH3.mp4"
     );
     setVideoKey(Date.now()); // Video key'ini güncelleyerek videoyu yeniden yükleyin
   };
@@ -69,14 +73,18 @@ export default function Home() {
       <div className="relative w-full h-screen">
         {!isLoading ? (
           <form onSubmit={handleSubmit}>
-            <Input
-              type="text"
+            <textarea
               placeholder="ASK A QUESTION"
               value={inputText}
               onChange={(e) => {
                 setInputText(e.target.value);
               }}
-              className="absolute top-2/3 -translate-y-2/3 left-1/2 tracking-widest text-xl -translate-x-1/2 bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 w-1/5"
+              onKeyDown={handleKeyDown}
+              style={{
+                height: "calc(1/9 * 100%)",
+                top: "calc(215/300 * 100%)",
+              }}
+              className="absolute top-3/4 -translate-y-2/3 left-1/2 tracking-widest text-xl -translate-x-1/2 bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 w-1/5 resize-none overflow-hidden"
             />
           </form>
         ) : (
@@ -96,12 +104,12 @@ export default function Home() {
             ref={videoRef}
             key={videoKey}
             muted={videoMuted}
-            className={`md:w-[450px] md:h-[300px] h-[200px] w-[1200px]`}
+            className={`md:w-[450px] md:h-[300px] h-[300px] w-[1200px]`}
             autoPlay
             playsInline
             loop={
               videoUrl ===
-                "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4" ||
+                "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH3.mp4" ||
               videoUrl ===
                 "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4"
             }
@@ -115,8 +123,8 @@ export default function Home() {
       </div>
       <div>
         <p
-          className="z-20 absolute -translate-x-1/2 flex justify-center mb-8 text-yellow-200 text-xl"
-          style={{ right: "calc(404 / 1400 * 100%)", top: "calc(1/7 * 100%)" }}
+          className="z-20 absolute flex justify-center mb-8 text-yellow-200 text-xl"
+          style={{ right: "calc(407 / 1400 * 100%)", top: "calc(1/7 * 100%)" }}
         >
           {creditCount}
         </p>

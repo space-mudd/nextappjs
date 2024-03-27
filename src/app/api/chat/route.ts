@@ -17,13 +17,14 @@ export async function POST(req: NextRequest) {
       },
       { role: "user", content: inputText },
     ],
-    model: "gpt-4-0125-preview",
+    model: "gpt-3.5-turbo-0125",
   });
 
   const content = completion.choices[0].message.content;
 
   const payload = {
-    input_face: "https://storage.googleapis.com/childrenstory-bucket/AVA5.mp4",
+    input_face:
+      "https://storage.googleapis.com/childrenstory-bucket/glitch3.mp4",
     text_prompt: content,
     tts_provider: "GOOGLE_TTS",
     google_voice_name: "en-GB-Neural2-C",
