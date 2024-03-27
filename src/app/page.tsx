@@ -83,8 +83,10 @@ export default function Home() {
               style={{
                 height: "calc(1/9 * 100%)",
                 top: "calc(215/300 * 100%)",
+                left: "calc(118/300 * 100%)",
+                width: "calc(22/100 * 100%)",
               }}
-              className="absolute top-3/4 -translate-y-2/3 left-1/2 tracking-widest text-xl -translate-x-1/2 bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 w-1/5 resize-none overflow-hidden"
+              className="absolute top-3/4 -translate-y-2/3 tracking-widest text-xl bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
             />
           </form>
         ) : (
