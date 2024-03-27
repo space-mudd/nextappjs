@@ -1,4 +1,5 @@
 export async function POST() {
-  console.log("sa");
-  return new Response("OK");
+  const output =
+    "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4";
+  return new Response(output);
 }
