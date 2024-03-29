@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import LoadingType from "@/components/LoadingType";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+
 export default function Home() {
   const [screenWidth, setScreenWidth] = useState(0);
   const [inputText, setInputText] = useState("");
@@ -151,9 +153,9 @@ export default function Home() {
             />
           </form>
         ) : (
-          <LoadingType />
+          <LoadingType character={character} />
         )}
-        <img
+        <LazyLoadImage
           className="z-10 absolute top-0 left-0 w-full h-full"
           src="/FINAL_SPACESHIP_SCREEN4.png"
           alt="background"

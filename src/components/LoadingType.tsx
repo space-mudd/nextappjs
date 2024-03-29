@@ -1,14 +1,17 @@
 import { TypeAnimation } from "react-type-animation";
 
-function LoadingType() {
+interface LoadingType {
+  character: string;
+}
+function LoadingType({ character }: LoadingType) {
   return (
     <TypeAnimation
       sequence={[
-        "AVA IS THINKING.",
+        `${character} IS THINKING.`,
         1000,
-        "AVA IS THINKING..",
+        `${character} IS THINKING..`,
         1000,
-        "AVA IS THINKING...",
+        `${character} IS THINKING...`,
         1000,
       ]}
       cursor={false}
