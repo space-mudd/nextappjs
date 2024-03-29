@@ -1,3 +1,7 @@
+export async function POST() {
+  return new Response("OK");
+}
+
 /*
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, UpdateCommand } from "@aws-sdk/lib-dynamodb";
