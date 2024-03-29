@@ -14,6 +14,25 @@ export default function Home() {
   const [creditCount, setCreditCount] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const videoRef = useRef(null);
+  const [character, setCharacter] = useState("");
+  useEffect(() => {
+    setCharacter(Math.floor(Math.random() * 2) + 1 === 1 ? "AVA" : "KAI");
+  }, []);
+
+  useEffect(() => {
+    console.log(character);
+    if (character === "KAI") {
+      setVideoUrl(
+        "https://storage.googleapis.com/childrenstory-bucket/KAI_GLITCH.mp4"
+      );
+      setVideoKey(Date.now());
+    } else if (character === "AVA") {
+      setVideoUrl(
+        "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
+      );
+      setVideoKey(Date.now());
+    }
+  }, [character]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -34,7 +53,7 @@ export default function Home() {
     setIsLoading(true);
     const res = await fetch("/api/chat", {
       method: "POST",
-      body: JSON.stringify({ inputText: inputText }),
+      body: JSON.stringify({ inputText: inputText, character: character }),
     });
     const text = await res.text();
     setIsLoading(false);
@@ -42,8 +61,22 @@ export default function Home() {
     setVideoKey(Date.now());
   };
 
+  const useCredit = async function () {
+    const res = await fetch("/api/useCredit", {
+      method: "POST",
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const remainingCredits = data.remainingCredits;
+      setCreditCount(remainingCredits);
+    } else {
+      console.error("Error using credit:", res.status);
+    }
+  };
   const handleSubmit = async () => {
     if (creditCount > 0) {
+      //await useCredit();
       setCreditCount(creditCount - 1);
       await handleClick();
       setInputText("");
@@ -63,13 +96,41 @@ export default function Home() {
   }, []);
 
   const handleVideoEnd = () => {
-    setVideoUrl(
-      "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH3.mp4"
-    );
+    if (character === "AVA") {
+      setVideoUrl(
+        "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
+      );
+    } else if (character === "KAI") {
+      setVideoUrl(
+        "https://storage.googleapis.com/childrenstory-bucket/KAI_GLITCH.mp4"
+      );
+    }
     setVideoKey(Date.now()); // Video key'ini güncelleyerek videoyu yeniden yükleyin
   };
+
+  const dbHandle = async function () {
+    const res = await fetch("/api/addUser", {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+    console.log("ok");
+  };
+
   return (
     <div className="relative bg-black h-screen w-full">
+      <button
+        className="absolute z-20 bg-transparent text-transparent top-0"
+        style={{
+          width: "calc(1/18 * 100%)",
+          top: "calc(115/400 * 100%)",
+          right: "calc(106/400 * 100%)",
+        }}
+        onClick={() => {
+          setCreditCount(creditCount + 1);
+        }}
+      >
+        token
+      </button>
       <div className="relative w-full h-screen">
         {!isLoading ? (
           <form onSubmit={handleSubmit}>
@@ -98,30 +159,66 @@ export default function Home() {
           alt="background"
         />
 
-        <div
-          className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center mb-8"
-          style={{ top: "calc(1/11 * 100%)" }}
-        >
-          <video
-            ref={videoRef}
-            key={videoKey}
-            muted={videoMuted}
-            className={`md:w-[450px] md:h-[300px] h-[300px] w-[1200px]`}
-            autoPlay
-            playsInline
-            loop={
-              videoUrl ===
-                "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH3.mp4" ||
-              videoUrl ===
-                "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4"
-            }
-            preload="none"
-            onEnded={handleVideoEnd}
+        {(character === "AVA" ||
+          videoUrl ===
+            "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4") && (
+          <div
+            className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center h-1/3 aspect-[16/9]"
+            style={{ top: "calc(1/8 * 100%)" }}
           >
-            <source src={videoUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
+            <video
+              ref={videoRef}
+              key={videoKey}
+              muted={videoMuted}
+              className={`h-full w-full`}
+              autoPlay
+              playsInline
+              loop={
+                videoUrl ===
+                  "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4" ||
+                videoUrl ===
+                  "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4"
+              }
+              preload="none"
+              onEnded={handleVideoEnd}
+            >
+              <source src={videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        )}
+
+        {((character === "KAI" &&
+          videoUrl !==
+            "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4") ||
+          (character !== "AVA" &&
+            videoUrl !==
+              "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4")) && (
+          <div
+            className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center h-1/2 aspect-[16/9]"
+            style={{ top: "calc(1/8 * 100%)" }}
+          >
+            <video
+              ref={videoRef}
+              key={videoKey}
+              muted={videoMuted}
+              className={`h-full w-full`}
+              autoPlay
+              playsInline
+              loop={
+                videoUrl ===
+                  "https://storage.googleapis.com/childrenstory-bucket/SKULL.mp4" ||
+                videoUrl ===
+                  "https://storage.googleapis.com/childrenstory-bucket/KAI_GLITCH.mp4"
+              }
+              preload="none"
+              onEnded={handleVideoEnd}
+            >
+              <source src={videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        )}
       </div>
       <div>
         <p
