@@ -12,6 +12,7 @@
     "@aws-sdk/client-dynamodb": "^3.540.0",
     "@aws-sdk/lib-dynamodb": "^3.540.0",
     "@aws-sdk/util-dynamodb": "^3.540.0",
+    "@google-cloud/text-to-speech": "^5.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.363.0",
