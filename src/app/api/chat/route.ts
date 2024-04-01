@@ -117,7 +117,7 @@ whisper, one revelation at a time.`,
     input_face:
       character === "AVA"
         ? "https://storage.googleapis.com/childrenstory-bucket/AVA5.mp4"
-        : "https://storage.googleapis.com/childrenstory-bucket/KAI_GLITCH_CUT.mp4",
+        : "https://storage.googleapis.com/childrenstory-bucket/KAI5.mp4",
     text_prompt: content,
     tts_provider: "GOOGLE_TTS",
     google_voice_name:

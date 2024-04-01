@@ -16,8 +16,10 @@ export default function Home() {
   const [fontSize, setFontSize] = useState("");
   const videoRef = useRef(null);
   const [character, setCharacter] = useState("");
+  //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
+  //"https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
   const kaiVideoUrl =
-    "https://storage.googleapis.com/childrenstory-bucket/KAI_GLITCH.mp4";
+    "https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4";
   const avaVideoUrl =
     "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4";
   useEffect(() => {
