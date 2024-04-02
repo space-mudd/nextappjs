@@ -15,27 +15,6 @@ export default function Home() {
   const [creditCount, setCreditCount] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [fontSize, setFontSize] = useState("");
-  const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
-
-  useEffect(() => {
-    fetch("https://muse.ai/collections/WQdRkN7/mrss", { mode: "no-cors" })
-      .then((response) => response.text())
-      .then((str) => {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(str, "text/xml");
-        const items = xmlDoc.querySelectorAll("item");
-        const urls = Array.from(items)
-          .map((item) => {
-            // 'media:content' etiketini ve onun 'url' özelliğini bul
-            const content = item.querySelector("media\\:content, content");
-            return content ? content.getAttribute("url") : null;
-          })
-          .filter((url) => url != null); // null olmayan URL'leri filtrele
-
-        setVideoURLs(urls);
-      })
-      .catch((error) => console.error("Error fetching RSS Feed:", error));
-  }, []);
 
   const videoRef = useRef(null);
   const [character, setCharacter] = useState("");
@@ -74,14 +53,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (isLoading && videoURLs.length) {
-      const randomIndex = Math.floor(Math.random() * videoURLs.length);
-      const selectedURL = videoURLs[randomIndex];
-      if (selectedURL !== null) {
-        setVideoUrl(selectedURL);
-      }
+    if (isLoading) {
+      setVideoUrl(videos[Math.floor(Math.random() * 19)]);
     }
-  }, [isLoading, videoURLs]);
+  }, [isLoading]);
 
   useEffect(() => {
     if (videoUrl) {
