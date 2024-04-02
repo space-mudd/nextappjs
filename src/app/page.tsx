@@ -18,7 +18,7 @@ export default function Home() {
   const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
 
   useEffect(() => {
-    fetch("https://muse.ai/collections/WQdRkN7/mrss")
+    fetch("https://muse.ai/collections/WQdRkN7/mrss", { mode: "no-cors" })
       .then((response) => response.text())
       .then((str) => {
         const parser = new DOMParser();
