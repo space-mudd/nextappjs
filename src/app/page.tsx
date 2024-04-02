@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import LoadingType from "@/components/LoadingType";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { videos } from "../../videos";
+
 export default function Home() {
   const [screenWidth, setScreenWidth] = useState(0);
   const [inputText, setInputText] = useState("");
@@ -14,6 +15,28 @@ export default function Home() {
   const [creditCount, setCreditCount] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [fontSize, setFontSize] = useState("");
+  const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
+
+  useEffect(() => {
+    fetch("https://muse.ai/collections/WQdRkN7/mrss")
+      .then((response) => response.text())
+      .then((str) => {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(str, "text/xml");
+        const items = xmlDoc.querySelectorAll("item");
+        const urls = Array.from(items)
+          .map((item) => {
+            // 'media:content' etiketini ve onun 'url' özelliğini bul
+            const content = item.querySelector("media\\:content, content");
+            return content ? content.getAttribute("url") : null;
+          })
+          .filter((url) => url != null); // null olmayan URL'leri filtrele
+
+        setVideoURLs(urls);
+      })
+      .catch((error) => console.error("Error fetching RSS Feed:", error));
+  }, []);
+
   const videoRef = useRef(null);
   const [character, setCharacter] = useState("");
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
@@ -37,7 +60,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log(character);
     if (character === "KAI") {
       setVideoUrl(kaiVideoUrl);
     } else if (character === "AVA") {
@@ -52,10 +74,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (isLoading) {
-      setVideoUrl(videos[Math.floor(Math.random() * 4)]);
+    if (isLoading && videoURLs.length) {
+      const randomIndex = Math.floor(Math.random() * videoURLs.length);
+      const selectedURL = videoURLs[randomIndex];
+      if (selectedURL !== null) {
+        setVideoUrl(selectedURL);
+      }
     }
-  }, [isLoading]);
+  }, [isLoading, videoURLs]);
 
   useEffect(() => {
     if (videoUrl) {
@@ -171,20 +197,24 @@ export default function Home() {
           className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center h-1/3 aspect-[16/9]"
           style={{ top: "calc(1/8 * 100%)" }}
         >
-          <video
-            ref={videoRef}
-            key={videoKey}
-            muted={videoMuted}
-            className={`h-full w-full`}
-            autoPlay
-            playsInline
-            loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
-            preload="none"
-            onEnded={handleVideoEnd}
-          >
-            <source src={videoUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          {videoUrl ? (
+            <video
+              ref={videoRef}
+              key={videoKey}
+              muted={videoMuted}
+              className={`h-full w-full`}
+              autoPlay
+              playsInline
+              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
+              preload="none"
+              onEnded={handleVideoEnd}
+            >
+              <source src={videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <div>
