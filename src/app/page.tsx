@@ -164,7 +164,7 @@ export default function Home() {
               style={{
                 height: "calc(1/9 * 100%)",
                 top: "calc(215/300 * 100%)",
-                left: "calc(118/300 * 100%)",
+                left: "calc(121/300 * 100%)",
                 width: "calc(22/100 * 100%)",
               }}
               className="absolute top-3/4 -translate-y-2/3 tracking-widest text-xl bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
@@ -175,7 +175,7 @@ export default function Home() {
         )}
         <LazyLoadImage
           className="z-10 absolute top-0 left-0 w-full h-full"
-          src="/FINAL_SPACESHIP_SCREEN4.png"
+          src="/FINAL_SPACESHIP-16x9sm.png"
           alt="background"
         />
         {videoUrl && !videoURLs.includes(videoUrl) ? (
@@ -230,7 +230,7 @@ export default function Home() {
           <p
             className="z-20 absolute flex justify-center mb-8 text-red-600"
             style={{
-              right: "calc(405 / 1400 * 100%)",
+              right: "calc(392 / 1400 * 100%)",
               top: "calc(95/700 * 100%)",
               fontSize: fontSize,
             }}
