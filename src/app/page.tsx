@@ -10,12 +10,12 @@ export default function Home() {
   const [screenWidth, setScreenWidth] = useState(0);
   const [inputText, setInputText] = useState("");
   const [videoMuted, setVideoMuted] = useState(true);
-  const [videoUrl, setVideoUrl] = useState("");
-  const [videoKey, setVideoKey] = useState(Date.now()); // Initial key
+  const [videoUrl, setVideoUrl] = useState<string | null>("");
+  const [videoKey, setVideoKey] = useState(Date.now());
   const [creditCount, setCreditCount] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [fontSize, setFontSize] = useState("");
-
+  const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
   const videoRef = useRef(null);
   const [character, setCharacter] = useState("");
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
@@ -41,11 +41,24 @@ export default function Home() {
   useEffect(() => {
     if (character === "KAI") {
       setVideoUrl(kaiVideoUrl);
+      setVideoKey(Date.now());
     } else if (character === "AVA") {
       setVideoUrl(avaVideoUrl);
+      setVideoKey(Date.now());
     }
   }, [character]);
 
+  useEffect(() => {
+    const fetchData = async function () {
+      const res = await fetch("/api/videoData", {
+        method: "POST",
+      });
+      const body = await res.json();
+      const urls = body.urls;
+      setVideoURLs(urls);
+    };
+    fetchData();
+  }, []);
   useEffect(() => {
     setTimeout(() => {
       setVideoMuted(false);
@@ -54,16 +67,11 @@ export default function Home() {
 
   useEffect(() => {
     if (isLoading) {
-      setVideoUrl(videos[Math.floor(Math.random() * 19)]);
+      setVideoUrl(videoURLs[Math.floor(Math.random() * 19)]);
+      setVideoKey(Date.now());
     }
   }, [isLoading]);
 
-  useEffect(() => {
-    if (videoUrl) {
-      console.log("url: " + videoUrl);
-      setVideoKey(Date.now());
-    }
-  }, [videoUrl]);
   const handleClick = async function () {
     setIsLoading(true);
     const res = await fetch("/api/chat", {
@@ -73,6 +81,7 @@ export default function Home() {
     const text = await res.text();
     setIsLoading(false);
     setVideoUrl(text);
+    setVideoKey(Date.now());
   };
 
   const useCredit = async function () {
@@ -112,8 +121,10 @@ export default function Home() {
   const handleVideoEnd = () => {
     if (character === "AVA") {
       setVideoUrl(avaVideoUrl);
+      setVideoKey(Date.now());
     } else if (character === "KAI") {
       setVideoUrl(kaiVideoUrl);
+      setVideoKey(Date.now());
     }
   };
 
@@ -167,12 +178,11 @@ export default function Home() {
           src="/FINAL_SPACESHIP_SCREEN4.png"
           alt="background"
         />
-
-        <div
-          className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center h-1/3 aspect-[16/9]"
-          style={{ top: "calc(1/8 * 100%)" }}
-        >
-          {videoUrl ? (
+        {videoUrl && !videoURLs.includes(videoUrl) ? (
+          <div
+            className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
+            style={{ top: "calc(1/8 * 100%)", height: "calc(100/300 * 100%)" }}
+          >
             <video
               ref={videoRef}
               key={videoKey}
@@ -187,10 +197,33 @@ export default function Home() {
               <source src={videoUrl} type="video/mp4" />
               Your browser does not support the video tag.
             </video>
-          ) : (
-            ""
-          )}
-        </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {videoUrl && videoURLs.includes(videoUrl) ? (
+          <div
+            className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
+            style={{ top: "calc(1/8 * 100%)", height: "calc(110/300 * 100%)" }}
+          >
+            <video
+              ref={videoRef}
+              key={videoKey}
+              muted={videoMuted}
+              className={`h-full w-full`}
+              autoPlay
+              playsInline
+              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
+              preload="none"
+              onEnded={handleVideoEnd}
+            >
+              <source src={videoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
       <div>
         {fontSize ? (

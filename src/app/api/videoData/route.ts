@@ -1,14 +1,37 @@
 import { NextResponse } from "next/server";
+import fetch from "node-fetch"; // Node.js 17.5 ve altı sürümler için
+import xml2js from "xml2js";
 
 export async function POST() {
-  try {
-    const museAiUrl = "https://muse.ai/collections/WQdRkN7/mrss";
-    const response = await fetch(museAiUrl);
-    const data = await response.text();
-
-    return new Response(JSON.stringify(data));
-  } catch (error) {
-    console.error("Muse.ai fetch error:", error);
-    return NextResponse.json({ error: "Error fetching from Muse.ai" });
+  // URL'den XML verisini çek
+  const response = await fetch("https://muse.ai/collections/WQdRkN7/mrss");
+  if (!response.ok) {
+    throw new Error(`Error: ${response.statusText}`);
   }
+  const xml = await response.text();
+
+  // xml2js parser'ını oluşturun
+  const parser = new xml2js.Parser();
+  const urls: string[] = [];
+  // XML'i JavaScript objesine dönüştür ve işle
+  parser.parseString(xml, (err: any, result: any) => {
+    if (err) {
+      throw err;
+    }
+
+    // URL'leri saklamak için bir dizi oluşturun
+
+    // <item> elementlerini dolaşın
+    const items = result.rss.channel[0].item;
+    items.forEach((item: any) => {
+      // Eğer <media:content> varsa, url'yi diziye ekleyin
+      if (item["media:content"]) {
+        urls.push(item["media:content"][0].$.url);
+      }
+    });
+
+    // URL dizisini yazdırın
+    console.log(urls);
+  });
+  return new Response(JSON.stringify({ urls: urls }));
 }
