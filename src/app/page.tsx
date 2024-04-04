@@ -23,7 +23,7 @@ export default function Home() {
   const kaiVideoUrl =
     "https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4";
   const avaVideoUrl =
-    "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH3.mp4";
+    "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4";
   useEffect(() => {
     setCharacter(Math.floor(Math.random() * 2) + 1 === 1 ? "AVA" : "KAI");
 
@@ -43,7 +43,9 @@ export default function Home() {
       setVideoUrl(kaiVideoUrl);
       setVideoKey(Date.now());
     } else if (character === "AVA") {
-      setVideoUrl(avaVideoUrl);
+      setVideoUrl(
+        "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4"
+      );
       setVideoKey(Date.now());
     }
   }, [character]);
@@ -120,7 +122,9 @@ export default function Home() {
 
   const handleVideoEnd = () => {
     if (character === "AVA") {
-      setVideoUrl(avaVideoUrl);
+      setVideoUrl(
+        "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4"
+      );
       setVideoKey(Date.now());
     } else if (character === "KAI") {
       setVideoUrl(kaiVideoUrl);
@@ -194,7 +198,11 @@ export default function Home() {
               className={`h-full w-full`}
               autoPlay
               playsInline
-              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
+              loop={
+                videoUrl ===
+                  "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4" ||
+                videoUrl === kaiVideoUrl
+              }
               preload="none"
               onEnded={handleVideoEnd}
             >
@@ -221,7 +229,11 @@ export default function Home() {
               className={`h-full w-full`}
               autoPlay
               playsInline
-              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
+              loop={
+                videoUrl ===
+                  "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4" ||
+                videoUrl === kaiVideoUrl
+              }
               preload="none"
               onEnded={handleVideoEnd}
             >
