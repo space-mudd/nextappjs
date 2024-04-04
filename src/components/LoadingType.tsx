@@ -40,8 +40,8 @@ function LoadingType({ character }: LoadingType) {
           className="absolute -translate-y-2/3 left-1/2 tracking-wider text-xl -translate-x-1/2 bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 w-1/5"
           speed={50}
           style={{
-            top: "calc(215/300 * 100%)",
-            fontSize: fontSize, // Font boyutunu dinamik olarak ayarlayın
+            top: "calc(238/300 * 100%)",
+            fontSize: fontSize,
             height: "calc(12/93 * 100%)",
             overflow: "auto",
             lineHeight: 1.5,
