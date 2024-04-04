@@ -23,7 +23,7 @@ export default function Home() {
   const kaiVideoUrl =
     "https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4";
   const avaVideoUrl =
-    "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4";
+    "https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH3.mp4";
   useEffect(() => {
     setCharacter(Math.floor(Math.random() * 2) + 1 === 1 ? "AVA" : "KAI");
 
