@@ -163,7 +163,7 @@ export default function Home() {
               onKeyDown={handleKeyDown}
               style={{
                 height: "calc(1/9 * 100%)",
-                top: "calc(215/300 * 100%)",
+                top: "calc(235/300 * 100%)",
                 left: "calc(121/300 * 100%)",
                 width: "calc(22/100 * 100%)",
               }}
@@ -175,13 +175,17 @@ export default function Home() {
         )}
         <LazyLoadImage
           className="z-10 absolute top-0 left-0 w-full h-full"
-          src="/FINAL_SPACESHIP-16x9sm.png"
+          src="/SPACESHIP.png"
           alt="background"
         />
         {videoUrl && !videoURLs.includes(videoUrl) ? (
           <div
-            className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
-            style={{ top: "calc(1/8 * 100%)", height: "calc(100/300 * 100%)" }}
+            className="z-0 absolute flex justify-center aspect-[16/9]"
+            style={{
+              top: "calc(132/800 * 100%)",
+              height: "calc(100/300 * 100%)",
+              left: "calc(73/200 * 100%)",
+            }}
           >
             <video
               ref={videoRef}
@@ -204,7 +208,11 @@ export default function Home() {
         {videoUrl && videoURLs.includes(videoUrl) ? (
           <div
             className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
-            style={{ top: "calc(1/8 * 100%)", height: "calc(110/300 * 100%)" }}
+            style={{
+              top: "calc(126/800 * 100%)",
+              height: "calc(110/300 * 100%)",
+              left: "calc(102/200 * 100%)",
+            }}
           >
             <video
               ref={videoRef}
@@ -231,7 +239,7 @@ export default function Home() {
             className="z-20 absolute flex justify-center mb-8 text-red-600"
             style={{
               right: "calc(392 / 1400 * 100%)",
-              top: "calc(95/700 * 100%)",
+              top: "calc(105/700 * 100%)",
               fontSize: fontSize,
             }}
           >
