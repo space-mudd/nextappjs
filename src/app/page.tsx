@@ -184,10 +184,16 @@ export default function Home() {
           <LoadingType character={character} />
         )}
         <LazyLoadImage
-          className="z-10 absolute top-0 left-0 w-full h-full"
-          src="/SPACESHIP.png"
-          alt="background"
+          style={{
+            backgroundImage: "url('FINAL_SPACESHIP-1920x1080_FIXEDGE 2.png')",
+            backgroundSize: "cover",
+            width: "1920px",
+            height: "1080px",
+            resize: "both",
+            overflow: "scroll",
+          }}
         />
+
         {videoUrl && !videoURLs.includes(videoUrl) ? (
           <div
             className="z-0 absolute flex justify-center aspect-[16/9]"
