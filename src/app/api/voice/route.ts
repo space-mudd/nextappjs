@@ -155,16 +155,13 @@ whisper, one revelation at a time."
   console.log(resInfo);
   const audioContentBase64 = resInfo.audioContent;
 
-  // Decode the base64 string to binary
   const audioBuffer = Buffer.from(audioContentBase64, "base64");
 
   const fileName = `output-${uuidv4()}.mp3`;
-  const fileDestination = `audioFiles/${fileName}`;
+  const fileDestination = `${fileName}`;
 
-  // Reference to your bucket file
   const file = storage.bucket(bucketName).file(fileDestination);
 
-  // Save the binary data to your Google Cloud Storage bucket
   await file.save(audioBuffer, {
     metadata: {
       contentType: "audio/mp3",
