@@ -76,11 +76,12 @@ export default function Home() {
 
   const handleClick = async function () {
     setIsLoading(true);
-    const res = await fetch("/api/chat", {
+    const res = await fetch("/api/voice", {
       method: "POST",
       body: JSON.stringify({ inputText: inputText, character: character }),
     });
     const text = await res.text();
+    console.log("text:" + text);
     setIsLoading(false);
     setVideoUrl(text);
     setVideoKey(Date.now());
@@ -140,6 +141,11 @@ export default function Home() {
     console.log("ok");
   };
 
+  const handleVoice = async function () {
+    const res = await fetch("/api/voice", {
+      method: "POST",
+    });
+  };
   return (
     <div className="relative bg-black h-screen w-full">
       <button
