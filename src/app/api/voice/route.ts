@@ -9,13 +9,11 @@ interface GooeyPayload {
   input_face: string;
   input_audio: string;
 }
-import ISynthesizeSpeechResponse from "@google-cloud/text-to-speech";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const client = new TextToSpeechClient();
 const bucketName = "childrenstory-bucket";
 const storage = new Storage({
   projectId: "childrenstory-413616",
