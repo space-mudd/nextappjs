@@ -194,7 +194,8 @@ export default function Home() {
             style={{
               top: "calc(132/800 * 100%)",
               height: "calc(100/300 * 100%)",
-              left: "calc(73/200 * 100%)",
+              left: "calc(1/2 * 100%)",
+              transform: "translate(-50%)",
             }}
           >
             <video
@@ -226,6 +227,7 @@ export default function Home() {
               top: "calc(126/800 * 100%)",
               height: "calc(110/300 * 100%)",
               left: "calc(102/200 * 100%)",
+              transform: "translate(-50%)",
             }}
           >
             <video
