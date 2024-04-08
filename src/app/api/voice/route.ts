@@ -17,7 +17,7 @@ const openai = new OpenAI({
 const bucketName = "childrenstory-bucket";
 const storage = new Storage({
   projectId: "childrenstory-413616",
-  keyFilename: "/childrenstory-413616-132e7537e436.json",
+  keyFilename: "public/childrenstory-413616-132e7537e436.json",
 });
 
 export async function POST(req: NextRequest) {
