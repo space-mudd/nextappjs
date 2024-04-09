@@ -184,14 +184,10 @@ export default function Home() {
           <LoadingType character={character} />
         )}
         <LazyLoadImage
-          style={{
-            backgroundImage: "url('FINAL_SPACESHIP-1920x1080_FIXEDGE 2.png')",
-            backgroundSize: "cover",
-            width: "1920px",
-            height: "1080px",
-            resize: "both",
-            overflow: "scroll",
-          }}
+          className="z-10 absolute top-0 left-0 w-full h-full object-cover"
+          src="/SPACESHIP.png"
+          alt="background"
+          style={{ objectFit: "cover" }} // Bu satırı ekleyin
         />
 
         {videoUrl && !videoURLs.includes(videoUrl) ? (
@@ -208,7 +204,7 @@ export default function Home() {
               ref={videoRef}
               key={videoKey}
               muted={videoMuted}
-              className={`h-full w-full`}
+              className={`h-full w-full `}
               autoPlay
               playsInline
               loop={
@@ -278,6 +274,3 @@ export default function Home() {
     </div>
   );
 }
-/*
-
-*/
