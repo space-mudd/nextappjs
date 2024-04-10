@@ -24,6 +24,53 @@ export default function Home() {
     "https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4";
   const avaVideoUrl =
     "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4";
+
+  const image = { width: 1920, height: 970 };
+  const target = { x: 1368, y: 150 };
+  const targetInput = { x: 780, y: 760 };
+  const [pointerCreditPosition, setPointerCreditPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+  const [pointerInputPosition, setPointerInputPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+
+  useEffect(() => {
+    const updatePointer = () => {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      let xScale = windowWidth / image.width;
+      let yScale = windowHeight / image.height;
+      let scale,
+        yOffset = 0,
+        xOffset = 0;
+
+      if (xScale > yScale) {
+        scale = xScale;
+        yOffset = (windowHeight - image.height * scale) / 2;
+      } else {
+        scale = yScale;
+        xOffset = (windowWidth - image.width * scale) / 2;
+      }
+
+      setPointerCreditPosition({
+        top: target.y * scale + yOffset,
+        left: target.x * scale + xOffset,
+      });
+
+      setPointerInputPosition({
+        top: targetInput.y * scale + yOffset,
+        left: targetInput.x * scale + xOffset,
+      });
+    };
+
+    updatePointer();
+    window.addEventListener("resize", updatePointer);
+
+    return () => window.removeEventListener("resize", updatePointer);
+  }, []);
   useEffect(() => {
     setCharacter(Math.floor(Math.random() * 2) + 1 === 1 ? "AVA" : "KAI");
 
@@ -173,8 +220,8 @@ export default function Home() {
               onKeyDown={handleKeyDown}
               style={{
                 height: "calc(1/9 * 100%)",
-                top: "calc(235/300 * 100%)",
-                left: "calc(121/300 * 100%)",
+                top: `${pointerInputPosition.top}px`,
+                left: `${pointerInputPosition.left}px`,
                 width: "calc(22/100 * 100%)",
               }}
               className="absolute top-3/4 -translate-y-2/3 tracking-widest text-xl bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
@@ -187,14 +234,14 @@ export default function Home() {
           className="z-10 absolute top-0 left-0 w-full h-full object-cover"
           src="/SPACESHIP.png"
           alt="background"
-          style={{ objectFit: "cover" }} // Bu satırı ekleyin
+          style={{ objectFit: "cover" }}
         />
 
         {videoUrl && !videoURLs.includes(videoUrl) ? (
           <div
             className="z-0 absolute flex justify-center aspect-[16/9]"
             style={{
-              top: "calc(132/800 * 100%)",
+              top: "calc(115/800 * 100%)",
               height: "calc(100/300 * 100%)",
               left: "calc(1/2 * 100%)",
               transform: "translate(-50%)",
@@ -260,8 +307,8 @@ export default function Home() {
           <p
             className="z-20 absolute flex justify-center mb-8 text-red-600"
             style={{
-              right: "calc(392 / 1400 * 100%)",
-              top: "calc(105/700 * 100%)",
+              top: `${pointerCreditPosition.top}px`,
+              left: `${pointerCreditPosition.left}px`,
               fontSize: fontSize,
             }}
           >
