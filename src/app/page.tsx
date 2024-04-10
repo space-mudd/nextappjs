@@ -17,6 +17,8 @@ export default function Home() {
   const [fontSize, setFontSize] = useState("");
   const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
   const videoRef = useRef(null);
+  const [inputWidth, setInputWidth] = useState(0);
+  const [inputHeight, setInputHeight] = useState(0);
   const [character, setCharacter] = useState("");
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
   //"https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
@@ -64,6 +66,8 @@ export default function Home() {
         top: targetInput.y * scale + yOffset,
         left: targetInput.x * scale + xOffset,
       });
+
+      setInputWidth(430 * scale + yOffset);
     };
 
     updatePointer();
@@ -222,13 +226,18 @@ export default function Home() {
                 height: "calc(1/9 * 100%)",
                 top: `${pointerInputPosition.top}px`,
                 left: `${pointerInputPosition.left}px`,
-                width: "calc(22/100 * 100%)",
+                //width: "calc(22/100 * 100%)",
+                width: `${inputWidth}px`,
+                fontSize: `${fontSize}px`,
               }}
               className="absolute top-3/4 -translate-y-2/3 tracking-widest text-xl bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
             />
           </form>
         ) : (
-          <LoadingType character={character} />
+          <LoadingType
+            character={character}
+            pointerInputPosition={pointerInputPosition}
+          />
         )}
         <LazyLoadImage
           className="z-10 absolute top-0 left-0 w-full h-full object-cover"
@@ -241,8 +250,8 @@ export default function Home() {
           <div
             className="z-0 absolute flex justify-center aspect-[16/9]"
             style={{
-              top: "calc(115/800 * 100%)",
-              height: "calc(100/300 * 100%)",
+              top: "calc(105/800 * 100%)",
+              height: "calc(115/300 * 100%)",
               left: "calc(1/2 * 100%)",
               transform: "translate(-50%)",
             }}
@@ -273,8 +282,8 @@ export default function Home() {
           <div
             className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
             style={{
-              top: "calc(126/800 * 100%)",
-              height: "calc(110/300 * 100%)",
+              top: "calc(105/800 * 100%)",
+              height: "calc(115/300 * 100%)",
               left: "calc(102/200 * 100%)",
               transform: "translate(-50%)",
             }}

@@ -3,32 +3,64 @@ import { TypeAnimation } from "react-type-animation";
 
 interface LoadingType {
   character: string;
+  pointerInputPosition: any;
 }
 
-function LoadingType({ character }: LoadingType) {
-  // Font boyutunu saklamak için bir state tanımlayın
+function LoadingType({ character, pointerInputPosition }: LoadingType) {
   const [fontSize, setFontSize] = useState("");
+  const [inputWidth, setInputWidth] = useState(0);
+  const image = { width: 1920, height: 970 };
+  useEffect(() => {
+    const updatePointer = () => {
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+      let xScale = windowWidth / image.width;
+      let yScale = windowHeight / image.height;
+      let scale,
+        yOffset = 0,
+        xOffset = 0;
 
-  // Pencere boyutunda bir değişiklik olduğunda çalışacak fonksiyonu tanımlayın
+      if (xScale > yScale) {
+        scale = xScale;
+        yOffset = (windowHeight - image.height * scale) / 2;
+      } else {
+        scale = yScale;
+        xOffset = (windowWidth - image.width * scale) / 2;
+      }
+
+      setInputWidth(430 * scale + yOffset);
+    };
+
+    updatePointer();
+    window.addEventListener("resize", updatePointer);
+
+    return () => window.removeEventListener("resize", updatePointer);
+  }, []);
   useEffect(() => {
     function handleResize() {
-      // Yeni font boyutunu hesaplayın (ekran yüksekliğinin 12/930'lık bir oranı)
       const newFontSize = `${(window.innerHeight * 18) / 930}px`;
       setFontSize(newFontSize);
     }
 
-    // Pencere boyutu değişikliği dinleyicisini ekleyin
     window.addEventListener("resize", handleResize);
 
-    // İlk yüklemede font boyutunu ayarlayın
     handleResize();
 
-    // Komponent unmount olduğunda dinleyiciyi kaldırın
     return () => window.removeEventListener("resize", handleResize);
-  }, []); // Boş bağımlılık dizisi, fonksiyonun sadece bileşen monte edildiğinde çalışmasını sağlar.
+  }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        height: "calc(1/9 * 100%)",
+        top: `${pointerInputPosition.top}px`,
+        left: `${pointerInputPosition.left}px`,
+        //width: "calc(22/100 * 100%)",
+        width: `${inputWidth}px`,
+        fontSize: fontSize,
+      }}
+      className="absolute top-3/4 -translate-y-2/3 tracking-widest text-xl bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
+    >
       {fontSize ? (
         <TypeAnimation
           sequence={[
@@ -37,13 +69,8 @@ function LoadingType({ character }: LoadingType) {
           ]}
           cursor={false}
           wrapper="span"
-          className="absolute -translate-y-2/3 left-1/2 tracking-wider text-xl -translate-x-1/2 bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 w-1/5"
           speed={50}
           style={{
-            top: "calc(238/300 * 100%)",
-            fontSize: fontSize,
-            height: "calc(12/93 * 100%)",
-            overflow: "auto",
             lineHeight: 1.5,
             display: "inline-block",
           }}
