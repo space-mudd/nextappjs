@@ -18,6 +18,7 @@ export default function Home() {
   const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
   const videoRef = useRef(null);
   const [inputWidth, setInputWidth] = useState(0);
+  const [videoHeight, setVideoHight] = useState(0);
   const [inputHeight, setInputHeight] = useState(0);
   const [character, setCharacter] = useState("");
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
@@ -228,9 +229,9 @@ export default function Home() {
                 left: `${pointerInputPosition.left}px`,
                 //width: "calc(22/100 * 100%)",
                 width: `${inputWidth}px`,
-                fontSize: `${fontSize}px`,
+                fontSize: `${fontSize}`,
               }}
-              className="absolute top-3/4 -translate-y-2/3 tracking-widest text-xl bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
+              className="absolute top-3/4 -translate-y-2/3 tracking-widest bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
             />
           </form>
         ) : (
@@ -282,7 +283,7 @@ export default function Home() {
           <div
             className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
             style={{
-              top: "calc(105/800 * 100%)",
+              top: "calc(102/800 * 100%)",
               height: "calc(115/300 * 100%)",
               left: "calc(102/200 * 100%)",
               transform: "translate(-50%)",
