@@ -5,8 +5,11 @@ import { Input } from "@/components/ui/input";
 import LoadingType from "@/components/LoadingType";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { videos } from "../../videos";
-
+import SignInForm from "@/components/SignInForm";
+import { useSession, signIn } from "next-auth/react";
 export default function Home() {
+  const { data: session } = useSession();
+  console.log(session);
   const [screenWidth, setScreenWidth] = useState(0);
   const [inputText, setInputText] = useState("");
   const [videoMuted, setVideoMuted] = useState(true);
@@ -15,11 +18,14 @@ export default function Home() {
   const [creditCount, setCreditCount] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [fontSize, setFontSize] = useState("");
+  const [inputFontSize, setInputFontSize] = useState("");
   const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
   const videoRef = useRef(null);
+  const [showForm, setShowForm] = useState(false);
   const [inputWidth, setInputWidth] = useState(0);
   const [videoHeight, setVideoHight] = useState(0);
   const [inputHeight, setInputHeight] = useState(0);
+
   const [character, setCharacter] = useState("");
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
   //"https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
@@ -31,11 +37,16 @@ export default function Home() {
   const image = { width: 1920, height: 970 };
   const target = { x: 1368, y: 150 };
   const targetInput = { x: 780, y: 760 };
+  const targetVideo = { x: 500, y: 200 };
   const [pointerCreditPosition, setPointerCreditPosition] = useState({
     top: 0,
     left: 0,
   });
   const [pointerInputPosition, setPointerInputPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+  const [pointerVideoPosition, setPointerVideoPosition] = useState({
     top: 0,
     left: 0,
   });
@@ -68,6 +79,10 @@ export default function Home() {
         left: targetInput.x * scale + xOffset,
       });
 
+      setPointerVideoPosition({
+        top: targetVideo.y * scale + yOffset,
+        left: targetVideo.x * scale + xOffset,
+      });
       setInputWidth(430 * scale + yOffset);
     };
 
@@ -81,7 +96,9 @@ export default function Home() {
 
     function handleResize() {
       const newFontSize = `${(window.innerHeight * 35) / 930}px`;
+      const newInputFontSize = `${(window.innerHeight * 25) / 930}px`;
       setFontSize(newFontSize);
+      setInputFontSize(newInputFontSize);
     }
 
     window.addEventListener("resize", handleResize);
@@ -153,6 +170,7 @@ export default function Home() {
     }
   };
   const handleSubmit = async () => {
+    setShowForm(true);
     if (creditCount > 0) {
       //await useCredit();
       setCreditCount(creditCount - 1);
@@ -193,6 +211,16 @@ export default function Home() {
     console.log("ok");
   };
 
+  const handleCredit = async function () {
+    if (session?.user) {
+      const res = await fetch("/api/addCredit", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: session?.user.id,
+        }),
+      });
+    }
+  };
   const handleVoice = async function () {
     const res = await fetch("/api/voice", {
       method: "POST",
@@ -208,6 +236,7 @@ export default function Home() {
           right: "calc(106/400 * 100%)",
         }}
         onClick={() => {
+          handleCredit();
           setCreditCount(creditCount + 1);
         }}
       >
@@ -229,7 +258,7 @@ export default function Home() {
                 left: `${pointerInputPosition.left}px`,
                 //width: "calc(22/100 * 100%)",
                 width: `${inputWidth}px`,
-                fontSize: `${fontSize}`,
+                fontSize: `${inputFontSize}`,
               }}
               className="absolute top-3/4 -translate-y-2/3 tracking-widest bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
             />
@@ -253,7 +282,7 @@ export default function Home() {
             style={{
               top: "calc(105/800 * 100%)",
               height: "calc(115/300 * 100%)",
-              left: "calc(1/2 * 100%)",
+              left: "calc(101/200 * 100%)",
               transform: "translate(-50%)",
             }}
           >
@@ -328,6 +357,7 @@ export default function Home() {
           ""
         )}
       </div>
+      {showForm && <SignInForm showForm={showForm} setShowForm={setShowForm} />}
     </div>
   );
 }

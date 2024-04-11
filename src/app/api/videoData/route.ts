@@ -19,19 +19,12 @@ export async function POST() {
       throw err;
     }
 
-    // URL'leri saklamak için bir dizi oluşturun
-
-    // <item> elementlerini dolaşın
     const items = result.rss.channel[0].item;
     items.forEach((item: any) => {
-      // Eğer <media:content> varsa, url'yi diziye ekleyin
       if (item["media:content"]) {
         urls.push(item["media:content"][0].$.url);
       }
     });
-
-    // URL dizisini yazdırın
-    console.log(urls);
   });
   return new Response(JSON.stringify({ urls: urls }));
 }
