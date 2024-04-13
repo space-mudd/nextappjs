@@ -158,7 +158,7 @@ export default function Home() {
     setVideoKey(Date.now());
   };
 
-  const useCredit = async function () {
+  const decrementCredit = async function () {
     setCreditCount(creditCount - 1);
     const res = await fetch("/api/useCredit", {
       method: "POST",
@@ -173,7 +173,7 @@ export default function Home() {
         setCreditCount(creditCount - 1);
         await handleClick();
         setInputText("");
-        await useCredit();
+        await decrementCredit();
       }
     }
   };
@@ -256,14 +256,6 @@ export default function Home() {
     }
   };
 
-  const useCrdit = async function () {
-    if (session?.user) {
-      const res = await fetch("/api/useCredit", {
-        method: "POST",
-        body: JSON.stringify({ userId: session?.user?.id }),
-      });
-    }
-  };
   return (
     <div className="relative bg-black h-screen w-full">
       <button

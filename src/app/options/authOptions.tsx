@@ -6,12 +6,13 @@ import { DynamoDBAdapter } from "@next-auth/dynamodb-adapter";
 import { AuthOptions } from "next-auth";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+
 const config: DynamoDBClientConfig = {
   credentials: {
     accessKeyId: process.env.AUTH_DYNAMODB_ID || "",
     secretAccessKey: process.env.AUTH_DYNAMODB_SECRET || "",
   },
-  region: process.env.AUTH_DYNAMODB_REGION || "",
+  region: process.env.AUTH_DYNAMODB_REGION,
 };
 
 const client = DynamoDBDocument.from(new DynamoDB(config), {
@@ -21,14 +22,14 @@ const client = DynamoDBDocument.from(new DynamoDB(config), {
     convertClassInstanceToMap: true,
   },
 });
-const ddbDocClient = DynamoDBDocumentClient.from(client);
+
 async function getUserCredit(userId: string) {
   const command = new GetCommand({
     TableName: "next-auth",
     Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
   });
   try {
-    const result = await ddbDocClient.send(command);
+    const result = await client.send(command);
     return result.Item?.kredi || 0;
   } catch (error) {
     console.error("Error fetching user credit:", error);

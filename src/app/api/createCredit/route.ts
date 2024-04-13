@@ -32,19 +32,17 @@ export async function POST(req: NextRequest) {
     return new Response(
       JSON.stringify({
         message: "Credit initialized",
-        credits: result.Attributes.kredi,
+        credits: result!.Attributes!.kredi,
       }),
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: any) {
     if (error.name === "ConditionalCheckFailedException") {
-      // This means the kredi attribute already exists.
       return new Response(
         JSON.stringify({ message: "Credit already exists" }),
         { status: 409 }
       );
     } else {
-      // Log the error for debugging purposes
       console.error("DynamoDB error:", error);
       return new Response(
         JSON.stringify({ message: "Internal Server Error" }),

@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const result = await ddbDocClient.send(command);
-    console.log(result.Item.kredi);
+    console.log(result!.Item!.kredi);
     if (result.Item) {
       return new Response(JSON.stringify({ credit: result.Item.kredi }));
     } else {

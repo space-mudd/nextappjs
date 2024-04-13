@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     return new Response(
       JSON.stringify({
         message: "Credit added successfully",
-        newCreditTotal: result.Attributes.kredi,
+        newCreditTotal: result!.Attributes!.kredi,
       }),
       { status: 200 }
     );
