@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { UpdateCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { NextRequest } from "next/server";
-import { getServerSession } from "next-auth/next";
+
 const client = new DynamoDBClient({
   credentials: {
     accessKeyId: process.env.AUTH_DYNAMODB_ID || "",
@@ -9,36 +9,31 @@ const client = new DynamoDBClient({
   },
   region: process.env.AUTH_DYNAMODB_REGION || "",
 });
-
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const userId = body.userId;
 
-  const command = new UpdateCommand({
+  const userId = body.userId;
+  if (!userId) {
+    return new Response("User ID is required", { status: 400 });
+  }
+
+  const command = new GetCommand({
     TableName: "next-auth",
     Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
-    UpdateExpression: "ADD kredi :inc",
-    ExpressionAttributeValues: {
-      ":inc": 1,
-    },
-    ReturnValues: "UPDATED_NEW",
   });
 
   try {
     const result = await ddbDocClient.send(command);
-    return new Response(
-      JSON.stringify({
-        message: "Credit added successfully",
-        newCreditTotal: result.Attributes.kredi,
-      }),
-      { status: 200 }
-    );
+    console.log(result.Item.kredi);
+    if (result.Item) {
+      return new Response(JSON.stringify({ credit: result.Item.kredi }));
+    } else {
+      return new Response("User not found", { status: 404 });
+    }
   } catch (error) {
-    console.error("DynamoDB error:", error);
-    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
-      status: 500,
-    });
+    console.error("Error fetching user credit:", error);
+    return new Response("Internal Server Error", { status: 500 });
   }
 }

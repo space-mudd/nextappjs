@@ -9,13 +9,13 @@ import SignInForm from "@/components/SignInForm";
 import { useSession, signIn } from "next-auth/react";
 export default function Home() {
   const { data: session } = useSession();
-  console.log(session);
+
   const [screenWidth, setScreenWidth] = useState(0);
   const [inputText, setInputText] = useState("");
   const [videoMuted, setVideoMuted] = useState(true);
   const [videoUrl, setVideoUrl] = useState<string | null>("");
   const [videoKey, setVideoKey] = useState(Date.now());
-  const [creditCount, setCreditCount] = useState(3);
+  const [creditCount, setCreditCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [fontSize, setFontSize] = useState("");
   const [inputFontSize, setInputFontSize] = useState("");
@@ -120,6 +120,7 @@ export default function Home() {
   }, [character]);
 
   useEffect(() => {
+    handleCredit();
     const fetchData = async function () {
       const res = await fetch("/api/videoData", {
         method: "POST",
@@ -129,6 +130,7 @@ export default function Home() {
       setVideoURLs(urls);
     };
     fetchData();
+    getCredit();
   }, []);
   useEffect(() => {
     setTimeout(() => {
@@ -157,25 +159,22 @@ export default function Home() {
   };
 
   const useCredit = async function () {
+    setCreditCount(creditCount - 1);
     const res = await fetch("/api/useCredit", {
       method: "POST",
+      body: JSON.stringify({ userId: session?.user?.id }),
     });
-
-    if (res.ok) {
-      const data = await res.json();
-      const remainingCredits = data.remainingCredits;
-      setCreditCount(remainingCredits);
-    } else {
-      console.error("Error using credit:", res.status);
-    }
   };
   const handleSubmit = async () => {
-    setShowForm(true);
-    if (creditCount > 0) {
-      //await useCredit();
-      setCreditCount(creditCount - 1);
-      await handleClick();
-      setInputText("");
+    if (!session) {
+      setShowForm(true);
+    } else {
+      if (creditCount > 0) {
+        setCreditCount(creditCount - 1);
+        await handleClick();
+        setInputText("");
+        await useCredit();
+      }
     }
   };
   const handleKeyDown = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -211,20 +210,59 @@ export default function Home() {
     console.log("ok");
   };
 
-  const handleCredit = async function () {
+  const getCredit = async function () {
     if (session?.user) {
-      const res = await fetch("/api/addCredit", {
+      console.log(session.user);
+
+      const res = await fetch("/api/getCredit", {
         method: "POST",
         body: JSON.stringify({
           userId: session?.user.id,
         }),
       });
+      const resJSON = await res.json();
+      const credit = resJSON.credit;
+      setCreditCount(credit);
+    } else {
+      console.log("not logged in");
+    }
+  };
+  const handleCredit = async function () {
+    if (session?.user) {
+      console.log(session.user);
+
+      const res = await fetch("/api/createCredit", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: session?.user.id,
+        }),
+      });
+    } else {
+      console.log("not logged in");
     }
   };
   const handleVoice = async function () {
     const res = await fetch("/api/voice", {
       method: "POST",
     });
+  };
+
+  const addCredit = async function () {
+    if (session?.user) {
+      const res = await fetch("/api/addCredit", {
+        method: "POST",
+        body: JSON.stringify({ userId: session?.user?.id }),
+      });
+    }
+  };
+
+  const useCrdit = async function () {
+    if (session?.user) {
+      const res = await fetch("/api/useCredit", {
+        method: "POST",
+        body: JSON.stringify({ userId: session?.user?.id }),
+      });
+    }
   };
   return (
     <div className="relative bg-black h-screen w-full">
@@ -236,7 +274,7 @@ export default function Home() {
           right: "calc(106/400 * 100%)",
         }}
         onClick={() => {
-          handleCredit();
+          addCredit();
           setCreditCount(creditCount + 1);
         }}
       >

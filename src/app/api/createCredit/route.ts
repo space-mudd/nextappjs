@@ -1,7 +1,7 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { UpdateCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { NextRequest } from "next/server";
-import { getServerSession } from "next-auth/next";
+
 const client = new DynamoDBClient({
   credentials: {
     accessKeyId: process.env.AUTH_DYNAMODB_ID || "",
@@ -19,10 +19,11 @@ export async function POST(req: NextRequest) {
   const command = new UpdateCommand({
     TableName: "next-auth",
     Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
-    UpdateExpression: "ADD kredi :inc",
+    UpdateExpression: "SET kredi = if_not_exists(kredi, :start)",
     ExpressionAttributeValues: {
-      ":inc": 1,
+      ":start": 3,
     },
+    ConditionExpression: "attribute_not_exists(kredi)",
     ReturnValues: "UPDATED_NEW",
   });
 
@@ -30,15 +31,25 @@ export async function POST(req: NextRequest) {
     const result = await ddbDocClient.send(command);
     return new Response(
       JSON.stringify({
-        message: "Credit added successfully",
-        newCreditTotal: result.Attributes.kredi,
+        message: "Credit initialized",
+        credits: result.Attributes.kredi,
       }),
       { status: 200 }
     );
   } catch (error) {
-    console.error("DynamoDB error:", error);
-    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
-      status: 500,
-    });
+    if (error.name === "ConditionalCheckFailedException") {
+      // This means the kredi attribute already exists.
+      return new Response(
+        JSON.stringify({ message: "Credit already exists" }),
+        { status: 409 }
+      );
+    } else {
+      // Log the error for debugging purposes
+      console.error("DynamoDB error:", error);
+      return new Response(
+        JSON.stringify({ message: "Internal Server Error" }),
+        { status: 500 }
+      );
+    }
   }
 }

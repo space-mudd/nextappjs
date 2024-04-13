@@ -1,67 +1,69 @@
-export async function POST() {
-  return new Response("OK");
-}
-
-/*
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { UpdateCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { NextRequest } from "next/server";
+import { GetCommand } from "@aws-sdk/lib-dynamodb";
+const client = new DynamoDBClient({
+  credentials: {
+    accessKeyId: process.env.AUTH_DYNAMODB_ID || "",
+    secretAccessKey: process.env.AUTH_DYNAMODB_SECRET || "",
+  },
+  region: process.env.AUTH_DYNAMODB_REGION || "",
+});
 
-const dbClient = new DynamoDBClient({});
-const docClient = DynamoDBDocumentClient.from(dbClient);
+const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-const decrementCredit = async (userId: string) => {
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const userId = body.userId;
+
+  const currentCredits = await getCurrentCredits(userId);
+  if (currentCredits <= 0) {
+    return new Response(
+      JSON.stringify({
+        message: "Insufficient credits",
+      }),
+      { status: 403 }
+    );
+  }
+
   const command = new UpdateCommand({
-    TableName: "UserConversations",
-    Key: {
-      userId: userId,
-    },
-    UpdateExpression: "SET conversationCount = conversationCount - :decrement",
+    TableName: "next-auth",
+    Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
+    UpdateExpression: "ADD kredi :dec",
     ExpressionAttributeValues: {
-      ":decrement": 1,
-      ":zero": 0, // Burada :zero ifadesini tanımlayın
+      ":dec": -1,
     },
-    ConditionExpression: "conversationCount > :zero",
     ReturnValues: "UPDATED_NEW",
   });
-  
-  try {
-    const response = await docClient.send(command);
-    console.log(response);
-    return response.Attributes.conversationCount;
-  } catch (error) {
-    if (error.name === "ConditionalCheckFailedException") {
-      console.log("No credits available for the user");
-      return 0;
-    }
-    throw error;
-  }
-};
 
-export async function POST(request: Request) {
-  const cookies = request.headers.get("cookie");
-  
-  if (!cookies) {
-    return new Response("Session cookie is required", { status: 400 });
+  try {
+    const result = await ddbDocClient.send(command);
+    return new Response(
+      JSON.stringify({
+        message: "Credit used successfully",
+        newCreditTotal: result.Attributes.kredi,
+      }),
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("DynamoDB error:", error);
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
+      status: 500,
+    });
   }
-  
-  const parsedCookies = cookies.split("; ").reduce((acc, cookie) => {
-    const [name, value] = cookie.split("=");
-    acc[name] = value;
-    return acc;
-  }, {} as Record<string, string>);
-  
-  const userId = parsedCookies["userId"];
-  
-  if (!userId) {
-    return new Response("Invalid session cookie", { status: 401 });
-  }
-  
-  const remainingCredits = await decrementCredit(userId);
-  
-  return new Response(JSON.stringify({ remainingCredits }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
 }
 
-*/
+async function getCurrentCredits(userId: string) {
+  const getItemCommand = new GetCommand({
+    TableName: "next-auth",
+    Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
+  });
+
+  try {
+    const data = await ddbDocClient.send(getItemCommand);
+    return data.Item ? data.Item.kredi : 0;
+  } catch (error) {
+    console.error("Error retrieving credits:", error);
+    return 0;
+  }
+}
