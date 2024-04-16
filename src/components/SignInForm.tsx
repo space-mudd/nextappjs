@@ -77,9 +77,11 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
           <Dialog open={showForm}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle className="text-center">Sign In</DialogTitle>
+                <DialogTitle className="text-center tracking-wide">
+                  Are You HUMAN? Please Verify.
+                </DialogTitle>
                 <DialogDescription>
-                  <div className="mt-6">
+                  <div className="mt-6 tracking-wide">
                     <form onSubmit={handleEmailSignIn}>
                       <div className="mb-4">
                         <label
@@ -106,7 +108,7 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
                         type="submit"
                         disabled={!isSent && isCustomLoading}
                         onClick={handleCustomEmailSignIn}
-                        className="w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="w-full tracking-wide bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       >
                         {isCustomLoading ? <Spinner /> : "Sign in with Email"}
                       </Button>
@@ -125,7 +127,7 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
                           }}
                           className="w-full bg-white text-gray-600 font-semibold py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
-                          <div className="flex items-center justify-center">
+                          <div className="flex items-center justify-center tracking-wide">
                             Continue with google
                           </div>
                         </Button>
@@ -155,7 +157,9 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
           <Dialog open={showForm}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle className="text-center">Sign In</DialogTitle>
+                <DialogTitle className="text-center">
+                  Are You HUMAN? Please Verify.
+                </DialogTitle>
                 <DialogDescription>
                   <div>Link has been sent</div>
                   <div

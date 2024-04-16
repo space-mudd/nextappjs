@@ -7,6 +7,8 @@ import { LazyLoadImage } from "react-lazy-load-image-component";
 import { videos } from "../../videos";
 import SignInForm from "@/components/SignInForm";
 import { useSession, signIn } from "next-auth/react";
+import BuyCredit from "@/components/BuyCredit";
+
 export default function Home() {
   const { data: session } = useSession();
 
@@ -22,6 +24,7 @@ export default function Home() {
   const [videoURLs, setVideoURLs] = useState<(string | null)[]>([]);
   const videoRef = useRef(null);
   const [showForm, setShowForm] = useState(false);
+  const [showBuyCredit, setShowBuyCredit] = useState(false);
   const [inputWidth, setInputWidth] = useState(0);
   const [videoHeight, setVideoHight] = useState(0);
   const [inputHeight, setInputHeight] = useState(0);
@@ -268,6 +271,7 @@ export default function Home() {
         onClick={() => {
           addCredit();
           setCreditCount(creditCount + 1);
+          setShowBuyCredit(true);
         }}
       >
         token
@@ -276,7 +280,7 @@ export default function Home() {
         {!isLoading ? (
           <form onSubmit={handleSubmit}>
             <textarea
-              placeholder="ASK A QUESTION"
+              placeholder={`${session ? "ASK A QUESTION" : "ARE YOU A HUMAN"}`}
               value={inputText}
               onChange={(e) => {
                 setInputText(e.target.value);
@@ -388,6 +392,12 @@ export default function Home() {
         )}
       </div>
       {showForm && <SignInForm showForm={showForm} setShowForm={setShowForm} />}
+      {showBuyCredit && (
+        <BuyCredit
+          showBuyCredit={showBuyCredit}
+          setShowBuyCredit={setShowBuyCredit}
+        />
+      )}
     </div>
   );
 }
