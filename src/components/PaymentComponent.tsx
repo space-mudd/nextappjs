@@ -31,17 +31,6 @@ function PaymentComponent() {
             window.paypal
               .HostedButtons({
                 hostedButtonId: "LK47HZMJ9ULCA",
-                createOrder: (data: any, actions: any) => {
-                  return actions.order.create({
-                    purchase_units: [
-                      {
-                        amount: {
-                          value: "0.01",
-                        },
-                      },
-                    ],
-                  });
-                },
                 onApprove: async (data: any, actions: any) => {
                   const details = await actions.order.capture();
                   console.log("Payment successful:", details);
