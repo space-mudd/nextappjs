@@ -178,6 +178,8 @@ export default function Home() {
         await handleClick();
         setInputText("");
         await decrementCredit();
+      } else {
+        setShowBuyCredit(true);
       }
     }
   };

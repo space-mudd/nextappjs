@@ -176,7 +176,7 @@ whisper, one revelation at a time."
   const payload = {
     input_face:
       character === "AVA"
-        ? "https://storage.googleapis.com/childrenstory-bucket/AVA5_GLITCH.mp4"
+        ? "https://storage.googleapis.com/childrenstory-bucket/avalips.mp4"
         : "https://storage.googleapis.com/childrenstory-bucket/KAI5.mp4",
     input_audio: `https://storage.googleapis.com/${bucketName}/${fileDestination}`,
   };
