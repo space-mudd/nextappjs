@@ -75,9 +75,9 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
       {!isSent ? (
         <div>
           <Dialog open={showForm}>
-            <DialogContent className="sm:max-w-[425px] max-h-min overflow-auto">
+            <DialogContent className="sm:max-w-[425px] max-h-min overflow-auto text-xl">
               <DialogHeader>
-                <DialogTitle className="text-center tracking-wide">
+                <DialogTitle className="text-center tracking-wide text-2xl">
                   Are You HUMAN? Please Verify.
                 </DialogTitle>
                 <DialogDescription>
@@ -86,7 +86,7 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
                       <div className="mb-4">
                         <label
                           htmlFor="email"
-                          className="block text-sm font-medium text-gray-700"
+                          className="block font-medium text-gray-700 text-xl"
                         >
                           Email Address
                         </label>
@@ -99,7 +99,7 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
                               setEmailAddress(e.target.value);
                             }}
                             placeholder="name@example.com"
-                            className="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full border-gray-300 rounded-md shadow-sm text-xl focus:ring-blue-500 focus:border-blue-500"
                             required
                           />
                         </div>
@@ -108,26 +108,26 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
                         type="submit"
                         disabled={!isSent && isCustomLoading}
                         onClick={handleCustomEmailSignIn}
-                        className="w-full tracking-wide bg-blue-600 text-white font-semibold py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        className="w-full tracking-wide text-xl bg-[#FF0000] text-white py-2 px-4 rounded-md hover:bg-[#FF0000] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                       >
                         {isCustomLoading ? <Spinner /> : "Sign in with Email"}
                       </Button>
                     </form>
-                    <div className="mt-6">
+                    <div className="mt-3">
                       <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                           <div className="w-full border-t border-gray-300"></div>
                         </div>
                       </div>
-                      <div className="mt-6">
+                      <div className="mt-3">
                         <Button
                           onClick={() => {
                             signIn("google");
                             setShowForm(false);
                           }}
-                          className="w-full bg-white text-gray-600 font-semibold py-2 px-4 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                          className="w-full bg-[#FF0000] text-gray-600 py-2 px-4 border border-gray-300 rounded-md hover:bg-[#FF0000] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
-                          <div className="flex items-center justify-center tracking-wide">
+                          <div className="flex text-xl items-center justify-center tracking-wide text-white">
                             Continue with google
                           </div>
                         </Button>
@@ -157,11 +157,11 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
           <Dialog open={showForm}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle className="text-center">
+                <DialogTitle className="text-center text-2xl">
                   Are You HUMAN? Please Verify.
                 </DialogTitle>
                 <DialogDescription>
-                  <div>Link has been sent</div>
+                  <div className="text-xl">Link has been sent</div>
                   <div
                     onClick={() => setShowForm(false)}
                     className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"

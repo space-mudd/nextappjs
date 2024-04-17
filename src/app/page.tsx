@@ -39,8 +39,8 @@ export default function Home() {
     "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4";
 
   const image = { width: 1920, height: 970 };
-  const target = { x: 1368, y: 150 };
-  const targetInput = { x: 780, y: 760 };
+  const target = { x: 1362, y: 150 };
+  const targetInput = { x: 770, y: 760 };
   const targetVideo = { x: 500, y: 200 };
   const [pointerCreditPosition, setPointerCreditPosition] = useState({
     top: 0,
@@ -386,7 +386,7 @@ export default function Home() {
               fontSize: fontSize,
             }}
           >
-            {creditCount}
+            {creditCount > 9 ? creditCount : `0${creditCount}`}
           </p>
         ) : (
           ""
