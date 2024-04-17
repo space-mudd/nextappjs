@@ -17,6 +17,8 @@
     "@google-cloud/storage": "^7.9.0",
     "@google-cloud/text-to-speech": "^5.2.0",
     "@next-auth/dynamodb-adapter": "^3.0.2",
+    "@paypal/checkout-server-sdk": "^1.0.3",
+    "@paypal/react-paypal-js": "^8.2.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-slot": "^1.0.2",
     "aws-sdk": "^2.1599.0",

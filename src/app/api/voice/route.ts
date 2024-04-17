@@ -136,8 +136,8 @@ whisper, one revelation at a time."
   const request = {
     input: { text: content },
     voice: {
-      languageCode: character === "AVA" ? "en-GB" : "en-US",
-      name: character === "AVA" ? "en-GB-Standard-A" : "en-US-Casual-K",
+      languageCode: character === "AVA" ? "en-US" : "en-US",
+      name: character === "AVA" ? "en-US-Standard-F" : "en-US-Casual-K",
       ssmlGender: character === "AVA" ? "FEMALE" : "MALE",
     },
     audioConfig: { audioEncoding: "MP3" },

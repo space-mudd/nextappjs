@@ -75,7 +75,7 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
       {!isSent ? (
         <div>
           <Dialog open={showForm}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] max-h-min overflow-auto">
               <DialogHeader>
                 <DialogTitle className="text-center tracking-wide">
                   Are You HUMAN? Please Verify.

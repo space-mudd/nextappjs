@@ -8,6 +8,7 @@ import { videos } from "../../videos";
 import SignInForm from "@/components/SignInForm";
 import { useSession, signIn } from "next-auth/react";
 import BuyCredit from "@/components/BuyCredit";
+import PaymentComponent from "@/components/PaymentComponent";
 
 export default function Home() {
   const { data: session } = useSession();
