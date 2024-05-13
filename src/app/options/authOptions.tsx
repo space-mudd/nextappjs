@@ -6,7 +6,7 @@ import { DynamoDBAdapter } from "@next-auth/dynamodb-adapter";
 import { AuthOptions } from "next-auth";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-
+import sendVerificationRequest from "./sendVerificationRequest";
 const config: DynamoDBClientConfig = {
   credentials: {
     accessKeyId: process.env.AUTH_DYNAMODB_ID || "",
@@ -47,6 +47,17 @@ export const authOptions: AuthOptions = {
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
+      sendVerificationRequest({
+        identifier: email,
+        url,
+        provider: { server, from },
+      }) {
+        sendVerificationRequest({
+          identifier: email,
+          url,
+          provider: { server, from },
+        });
+      },
     }),
   ],
   callbacks: {
