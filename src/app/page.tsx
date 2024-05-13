@@ -272,9 +272,13 @@ export default function Home() {
           right: "calc(106/400 * 100%)",
         }}
         onClick={() => {
-          addCredit();
-          setCreditCount(creditCount + 1);
-          setShowBuyCredit(true);
+          //addCredit();
+          //setCreditCount(creditCount + 1);
+          if (session) {
+            setShowBuyCredit(true);
+          } else {
+            setShowForm(true);
+          }
         }}
       >
         token
