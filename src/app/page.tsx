@@ -139,7 +139,7 @@ export default function Home() {
   useEffect(() => {
     setTimeout(() => {
       setVideoMuted(false);
-    }, 1000);
+    }, 2000);
   }, []);
 
   useEffect(() => {
@@ -283,7 +283,7 @@ export default function Home() {
         {!isLoading ? (
           <form onSubmit={handleSubmit}>
             <textarea
-              placeholder={`${session ? "ASK A QUESTION" : "ARE YOU A HUMAN"}`}
+              placeholder={`${session ? "ASK A QUESTION" : "ASK A QUESTION"}`}
               value={inputText}
               onChange={(e) => {
                 setInputText(e.target.value);
