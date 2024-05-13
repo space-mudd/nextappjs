@@ -78,7 +78,8 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
             <DialogContent className="sm:max-w-[425px] max-h-min overflow-auto text-xl">
               <DialogHeader>
                 <DialogTitle className="text-center tracking-wide text-2xl">
-                  Are You HUMAN? Please Verify.
+                  <p className="font-bold">Are You HUMAN?</p>
+                  Please Verify.
                 </DialogTitle>
                 <DialogDescription>
                   <div className="mt-6 tracking-wide">
@@ -158,7 +159,8 @@ function SignInForm({ showForm, setShowForm }: SignInFormProps) {
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle className="text-center text-2xl">
-                  Are You HUMAN? Please Verify.
+                  <p className="font-bold">Are You HUMAN?</p>
+                  Please Verify.
                 </DialogTitle>
                 <DialogDescription>
                   <div className="text-xl">
