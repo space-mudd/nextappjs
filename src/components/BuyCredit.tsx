@@ -18,19 +18,19 @@ interface BuyCreditInterface {
 
 function BuyCredit({ showBuyCredit, setShowBuyCredit }: BuyCreditInterface) {
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+
   return (
     <div>
       <div>
         <Dialog open={showBuyCredit}>
           <DialogContent className="sm:max-w-[425px] max-h-screen overflow-auto">
             <DialogHeader>
-              <DialogTitle className="text-center">Insert token</DialogTitle>
+              <DialogTitle className="text-center text-xl">
+                Insert token
+              </DialogTitle>
               <DialogDescription>
                 <div>
-                  <PaymentComponent
-                    isScriptLoaded={isScriptLoaded}
-                    setIsScriptLoaded={setIsScriptLoaded}
-                  />
+                  <PaymentComponent />
                 </div>
                 <div
                   onClick={() => {
