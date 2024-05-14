@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 
-const PaymentComponent = () => {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-
+interface PaymentProps {
+  isScriptLoaded: boolean;
+  setIsScriptLoaded: any;
+}
+const PaymentComponent = ({
+  isScriptLoaded,
+  setIsScriptLoaded,
+}: PaymentProps) => {
   const addPaypalScript = () => {
     if (window.paypal) {
-      setScriptLoaded(true);
+      setIsScriptLoaded(true);
       return;
     }
     const script = document.createElement("script");
@@ -14,7 +19,7 @@ const PaymentComponent = () => {
     script.type = "text/javascript";
     script.async = true;
     script.onload = () => {
-      setScriptLoaded(true);
+      setIsScriptLoaded(true);
       window.paypal
         .HostedButtons({
           hostedButtonId: "CT34Y9DUCK63E",
@@ -30,7 +35,7 @@ const PaymentComponent = () => {
 
   return (
     <div>
-      {scriptLoaded ? <div id="paypal-container"></div> : <p>Loading...</p>}
+      {isScriptLoaded ? <div id="paypal-container"></div> : <p>Loading...</p>}
     </div>
   );
 };
