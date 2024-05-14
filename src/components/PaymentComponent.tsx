@@ -1,61 +1,38 @@
-"use client";
-import Script from "next/script";
-import { useSession } from "next-auth/react";
+import React, { useEffect, useState } from "react";
 
-function PaymentComponent() {
-  const { data: session } = useSession();
+const PaymentComponent = () => {
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
-  const addCredit = async function () {
-    if (session?.user) {
-      try {
-        const res = await fetch("/api/addCredit", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ userId: session.user.id }),
-        });
-        if (!res.ok) {
-          console.error("Failed to add credit");
-        } else {
-          console.log("Credit added successfully");
-        }
-      } catch (error) {
-        console.error("Error adding credit:", error);
-      }
+  const addPaypalScript = () => {
+    if (window.paypal) {
+      setScriptLoaded(true);
+      return;
     }
+    const script = document.createElement("script");
+    script.src =
+      "https://www.paypal.com/sdk/js?client-id=BAA93KMHLc6-DecbhTiai1oIwLjx1nyWQupHLk7kqf7Ffd8dcypMFkNyES8LQpF7R1YVknDTuNfFgK1cnI&components=hosted-buttons&enable-funding=venmo&currency=USD";
+    script.type = "text/javascript";
+    script.async = true;
+    script.onload = () => {
+      setScriptLoaded(true);
+      window.paypal
+        .HostedButtons({
+          hostedButtonId: "CT34Y9DUCK63E",
+        })
+        .render("#paypal-container");
+    };
+    document.body.appendChild(script);
   };
 
+  useEffect(() => {
+    addPaypalScript();
+  }, []);
+
   return (
-    <>
-      <Script
-        src="https://www.paypal.com/sdk/js?client-id=BAA93KMHLc6-DecbhTiai1oIwLjx1nyWQupHLk7kqf7Ffd8dcypMFkNyES8LQpF7R1YVknDTuNfFgK1cnI&components=hosted-buttons&enable-funding=venmo&currency=USD"
-        onLoad={() => {
-          if (window.paypal) {
-            try {
-              window.paypal
-                .HostedButtons({
-                  hostedButtonId: "LK47HZMJ9ULCA",
-                  onApprove: async (data: any, actions: any) => {
-                    try {
-                      const details = await actions.order.capture();
-                      console.log("Payment successful:", details);
-                      await addCredit();
-                    } catch (error) {
-                      console.error("Error capturing order:", error);
-                    }
-                  },
-                })
-                .render("#paypal-container-LK47HZMJ9ULCA");
-            } catch (error) {
-              console.error("Error initializing PayPal buttons:", error);
-            }
-          }
-        }}
-      />
-      <div className="overflow-auto" id="paypal-container-LK47HZMJ9ULCA"></div>
-    </>
+    <div>
+      {scriptLoaded ? <div id="paypal-container"></div> : <p>Loading...</p>}
+    </div>
   );
-}
+};
 
 export default PaymentComponent;
