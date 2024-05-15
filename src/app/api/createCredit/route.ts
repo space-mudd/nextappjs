@@ -17,13 +17,13 @@ export async function POST(req: NextRequest) {
   const userId = body.userId;
 
   const command = new UpdateCommand({
-    TableName: "next-auth",
+    TableName: "spacecraft",
     Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
-    UpdateExpression: "SET kredi = if_not_exists(kredi, :start)",
+    UpdateExpression: "SET credit = if_not_exists(credit, :start)",
     ExpressionAttributeValues: {
-      ":start": 3,
+      ":start": 1,
     },
-    ConditionExpression: "attribute_not_exists(kredi)",
+    ConditionExpression: "attribute_not_exists(credit)",
     ReturnValues: "UPDATED_NEW",
   });
 
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     return new Response(
       JSON.stringify({
         message: "Credit initialized",
-        credits: result!.Attributes!.kredi,
+        credits: result!.Attributes!.credit,
       }),
       { status: 200 }
     );

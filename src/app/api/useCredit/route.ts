@@ -27,9 +27,9 @@ export async function POST(req: NextRequest) {
   }
 
   const command = new UpdateCommand({
-    TableName: "next-auth",
+    TableName: "spacecraft",
     Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
-    UpdateExpression: "ADD kredi :dec",
+    UpdateExpression: "ADD credit :dec",
     ExpressionAttributeValues: {
       ":dec": -1,
     },
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     return new Response(
       JSON.stringify({
         message: "Credit used successfully",
-        newCreditTotal: result!.Attributes!.kredi,
+        newCreditTotal: result!.Attributes!.credit,
       }),
       { status: 200 }
     );
@@ -55,13 +55,13 @@ export async function POST(req: NextRequest) {
 
 async function getCurrentCredits(userId: string) {
   const getItemCommand = new GetCommand({
-    TableName: "next-auth",
+    TableName: "spacecraft",
     Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
   });
 
   try {
     const data = await ddbDocClient.send(getItemCommand);
-    return data.Item ? data.Item.kredi : 0;
+    return data.Item ? data.Item.credit : 0;
   } catch (error) {
     console.error("Error retrieving credits:", error);
     return 0;

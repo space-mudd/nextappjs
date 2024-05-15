@@ -20,15 +20,15 @@ export async function POST(req: NextRequest) {
   }
 
   const command = new GetCommand({
-    TableName: "next-auth",
+    TableName: "spacecraft",
     Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
   });
 
   try {
     const result = await ddbDocClient.send(command);
-    console.log(result!.Item!.kredi);
+    console.log(result!.Item!.credit);
     if (result.Item) {
-      return new Response(JSON.stringify({ credit: result.Item.kredi }));
+      return new Response(JSON.stringify({ credit: result.Item.credit }));
     } else {
       return new Response("User not found", { status: 404 });
     }
