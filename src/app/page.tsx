@@ -403,6 +403,8 @@ export default function Home() {
         <BuyCredit
           showBuyCredit={showBuyCredit}
           setShowBuyCredit={setShowBuyCredit}
+          creditCount={creditCount}
+          setCreditCount={setCreditCount}
         />
       )}
     </div>

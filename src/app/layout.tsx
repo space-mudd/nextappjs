@@ -26,6 +26,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <Head>
+        <script src="https://www.paypal.com/sdk/js?client-id=BAA93KMHLc6-DecbhTiai1oIwLjx1nyWQupHLk7kqf7Ffd8dcypMFkNyES8LQpF7R1YVknDTuNfFgK1cnI&enable-funding=venmo&currency=USD"></script>
         <link rel="icon" href="/favicon.ico" />
         <link
           rel="icon"

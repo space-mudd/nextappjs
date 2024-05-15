@@ -14,9 +14,16 @@ import { useSession } from "next-auth/react";
 interface BuyCreditInterface {
   showBuyCredit: any;
   setShowBuyCredit: any;
+  creditCount: any;
+  setCreditCount: any;
 }
 
-function BuyCredit({ showBuyCredit, setShowBuyCredit }: BuyCreditInterface) {
+function BuyCredit({
+  showBuyCredit,
+  setShowBuyCredit,
+  creditCount,
+  setCreditCount,
+}: BuyCreditInterface) {
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   return (
@@ -25,12 +32,19 @@ function BuyCredit({ showBuyCredit, setShowBuyCredit }: BuyCreditInterface) {
         <Dialog open={showBuyCredit}>
           <DialogContent className="sm:max-w-[425px] max-h-screen overflow-auto">
             <DialogHeader>
-              <DialogTitle className="text-center text-xl">
+              <DialogTitle className="text-center text-2xl">
                 Insert token
               </DialogTitle>
               <DialogDescription>
                 <div>
-                  <PaymentComponent />
+                  <PaymentComponent
+                    creditCount={creditCount}
+                    setCreditCount={setCreditCount}
+                    showBuyCredit={showBuyCredit}
+                    setShowBuyCredit={setShowBuyCredit}
+                    isScriptLoaded={isScriptLoaded}
+                    setIsScriptLoaded={setIsScriptLoaded}
+                  />
                 </div>
                 <div
                   onClick={() => {
