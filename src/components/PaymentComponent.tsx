@@ -91,7 +91,7 @@ const PaymentComponent = ({
   return (
     <div>
       <Script
-        src="https://www.paypal.com/sdk/js?client-id=ATk9UOlq4DNa7YJ8wfl4s4lBeiNYCIgNYa8-xntjbHDRakQG89bTE4O_87i61fMB3pBY3A-qKUWZYowA&enable-funding=venmo&currency=USD"
+        src="https://www.paypal.com/sdk/js?client-id=AagdD2yhM3oc7hnv4-6jg4A4vp51hep23UMWDUJr2v0Cv7VBSFChJPAk7I57ZcWtRV9jCs-KJwdDQ9Ns&enable-funding=venmo&currency=USD"
         onLoad={() => {
           console.log("PayPal script loaded");
           setIsScriptLoaded(true);
