@@ -119,12 +119,23 @@ whisper, one revelation at a time."
   const payload = {
     input_face:
       character === "AVA"
-        ? "https://storage.googleapis.com/childrenstory-bucket/AVA5_GLITCH.mp4"
-        : "https://storage.googleapis.com/childrenstory-bucket/KAI5.mp4",
+        ? "https://storage.googleapis.com/childrenstory-bucket/AVA_BLINK.mp4"
+        : "https://storage.googleapis.com/childrenstory-bucket/KAI_BLINKS.mp4",
     text_prompt: content,
     tts_provider: "GOOGLE_TTS",
     google_voice_name:
       character === "AVA" ? "en-GB-Neural2-C" : "en-GB-Neural2-D",
+    selected_model: "SadTalker",
+    face_padding_top: 0,
+    face_padding_bottom: 12,
+    face_padding_left: 0,
+    face_padding_right: 0,
+    sadtalker_settings: {
+      still: true,
+      preprocess: "full",
+      pose_style: 1,
+      expression_scale: 1,
+    },
   };
 
   const response = await fetch("https://api.gooey.ai/v2/LipsyncTTS/", {

@@ -34,9 +34,9 @@ export default function Home() {
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
   //"https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
   const kaiVideoUrl =
-    "https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4";
+    "https://storage.googleapis.com/childrenstory-bucket/KAI_BLINKS.mp4";
   const avaVideoUrl =
-    "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4";
+    "https://storage.googleapis.com/childrenstory-bucket/AVA_BLINK.mp4";
 
   const image = { width: 1920, height: 970 };
   const target = { x: 1362, y: 150 };
@@ -116,9 +116,7 @@ export default function Home() {
       setVideoUrl(kaiVideoUrl);
       setVideoKey(Date.now());
     } else if (character === "AVA") {
-      setVideoUrl(
-        "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4"
-      );
+      setVideoUrl(avaVideoUrl);
       setVideoKey(Date.now());
     }
   }, [character]);
@@ -334,11 +332,7 @@ export default function Home() {
               className={`h-full w-full `}
               autoPlay
               playsInline
-              loop={
-                videoUrl ===
-                  "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4" ||
-                videoUrl === kaiVideoUrl
-              }
+              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
               preload="none"
               onEnded={handleVideoEnd}
             >
@@ -366,11 +360,7 @@ export default function Home() {
               className={`h-full w-full`}
               autoPlay
               playsInline
-              loop={
-                videoUrl ===
-                  "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4" ||
-                videoUrl === kaiVideoUrl
-              }
+              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
               preload="none"
               onEnded={handleVideoEnd}
             >
