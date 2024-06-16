@@ -194,9 +194,7 @@ export default function Home() {
 
   const handleVideoEnd = () => {
     if (character === "AVA") {
-      setVideoUrl(
-        "https://storage.googleapis.com/childrenstory-bucket/AVA_033124_MOB.mp4"
-      );
+      setVideoUrl(avaVideoUrl);
       setVideoKey(Date.now());
     } else if (character === "KAI") {
       setVideoUrl(kaiVideoUrl);
