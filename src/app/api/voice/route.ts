@@ -14,10 +14,12 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const bucketName = "childrenstory-bucket";
+const bucketName = "raygun";
 const storage = new Storage({
-  projectId: "childrenstory-413616",
-  keyFilename: "public/childrenstory-413616-132e7537e436.json",
+  projectId: process.env.PROJECT_ID,
+  credentials: JSON.parse(
+    process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || ""
+  ),
 });
 
 export async function POST(req: NextRequest) {
@@ -176,9 +178,10 @@ whisper, one revelation at a time."
   const payload = {
     input_face:
       character === "AVA"
-        ? "https://storage.googleapis.com/childrenstory-bucket/AVA_BLINK.mp4"
-        : "https://storage.googleapis.com/childrenstory-bucket/KAI_BLINKS.mp4",
+        ? "https://zapbucket.s3.amazonaws.com/AVA_BLINK.mp4"
+        : "https://zapbucket.s3.amazonaws.com/KAI_BLINKS.mp4",
     input_audio: `https://storage.googleapis.com/${bucketName}/${fileDestination}`,
+    selected_model: "Wav2Lip",
   };
 
   const result = await gooeyAPI(payload);
