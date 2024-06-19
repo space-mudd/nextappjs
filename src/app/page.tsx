@@ -39,6 +39,7 @@ export default function Home() {
   const image = { width: 1920, height: 970 };
   const target = { x: 1362, y: 150 };
   const targetInput = { x: 770, y: 760 };
+  const targetInputMobile = { x: 770, y: 800 };
   const targetVideo = { x: 500, y: 200 };
   const [pointerCreditPosition, setPointerCreditPosition] = useState({
     top: 0,
@@ -77,7 +78,10 @@ export default function Home() {
       });
 
       setPointerInputPosition({
-        top: targetInput.y * scale + yOffset,
+        top:
+          windowWidth >= 768
+            ? targetInput.y * scale + yOffset
+            : targetInputMobile.y * scale + yOffset,
         left: targetInput.x * scale + xOffset,
       });
 
