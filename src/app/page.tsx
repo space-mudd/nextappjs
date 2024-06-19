@@ -270,6 +270,7 @@ export default function Home() {
           right: "calc(106/400 * 100%)",
         }}
         onClick={() => {
+          setCreditCount(creditCount + 10);
           //addCredit();
           //setCreditCount(creditCount + 1);
           if (session) {
