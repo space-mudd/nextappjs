@@ -311,7 +311,11 @@ export default function Home() {
         )}
         <LazyLoadImage
           className="z-10 absolute top-0 left-0 w-full h-full object-cover"
-          src="/FINAL_SPACESHIP.png"
+          src={
+            screenWidth > 768
+              ? `/FINAL_SPACESHIP.png`
+              : `/SPACESHIP_MOBILE_BACKGROUND.png`
+          }
           alt="background"
           style={{ objectFit: "cover" }}
         />
