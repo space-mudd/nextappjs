@@ -38,7 +38,7 @@ export default function Home() {
 
   const image = { width: 1920, height: 970 };
   const target = { x: 1362, y: 150 };
-  const targetMobile = { x: 1155, y: 105 };
+  const targetMobile = { x: 1170, y: 115 };
   const targetInput = { x: 770, y: 760 };
   const targetInputMobile = { x: 860, y: 630 };
   const targetVideo = { x: 500, y: 200 };
