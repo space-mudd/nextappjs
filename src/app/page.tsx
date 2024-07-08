@@ -38,8 +38,9 @@ export default function Home() {
 
   const image = { width: 1920, height: 970 };
   const target = { x: 1362, y: 150 };
+  const targetMobile = { x: 1140, y: 95 };
   const targetInput = { x: 770, y: 760 };
-  const targetInputMobile = { x: 770, y: 830 };
+  const targetInputMobile = { x: 860, y: 530 };
   const targetVideo = { x: 500, y: 200 };
   const [pointerCreditPosition, setPointerCreditPosition] = useState({
     top: 0,
@@ -73,8 +74,14 @@ export default function Home() {
       }
 
       setPointerCreditPosition({
-        top: target.y * scale + yOffset,
-        left: target.x * scale + xOffset,
+        top:
+          windowWidth >= 768
+            ? target.y * scale + yOffset
+            : targetMobile.y * scale + yOffset,
+        left:
+          windowWidth >= 768
+            ? target.x * scale + xOffset
+            : targetMobile.x * scale + xOffset,
       });
 
       setPointerInputPosition({
@@ -82,14 +89,21 @@ export default function Home() {
           windowWidth >= 768
             ? targetInput.y * scale + yOffset
             : targetInputMobile.y * scale + yOffset,
-        left: targetInput.x * scale + xOffset,
+        left:
+          windowWidth >= 768
+            ? targetInput.x * scale + xOffset
+            : targetInputMobile.x * scale + xOffset,
       });
 
       setPointerVideoPosition({
         top: targetVideo.y * scale + yOffset,
         left: targetVideo.x * scale + xOffset,
       });
-      setInputWidth(430 * scale + yOffset);
+      if (windowWidth > 768) {
+        setInputWidth(430 * scale + yOffset);
+      } else {
+        setInputWidth(215 * scale + yOffset);
+      }
     };
 
     updatePointer();
@@ -101,8 +115,17 @@ export default function Home() {
     setCharacter(Math.floor(Math.random() * 2) + 1 === 1 ? "AVA" : "KAI");
 
     function handleResize() {
-      const newFontSize = `${(window.innerHeight * 35) / 930}px`;
-      const newInputFontSize = `${(window.innerHeight * 25) / 930}px`;
+      const windowWidth = window.innerWidth;
+      const newFontSize = `${
+        (windowWidth >= 768
+          ? window.innerHeight * 35
+          : window.innerHeight * 25) / 930
+      }px`;
+      const newInputFontSize = `${
+        (windowWidth >= 768
+          ? window.innerHeight * 25
+          : window.innerHeight * 20) / 930
+      }px`;
       setFontSize(newFontSize);
       setInputFontSize(newInputFontSize);
     }
@@ -265,9 +288,15 @@ export default function Home() {
       <button
         className="absolute z-20 bg-transparent text-transparent top-0"
         style={{
-          width: "calc(1/18 * 100%)",
-          top: "calc(115/400 * 100%)",
-          right: "calc(106/400 * 100%)",
+          width: screenWidth >= 768 ? "calc(1/18 * 100%)" : "calc(2/18 * 100%)",
+          height:
+            screenWidth >= 768 ? "calc(1/18 * 100%)" : "calc(1/36 * 100%)",
+          top: `${
+            screenWidth >= 768 ? "calc(116/400 * 100%)" : "calc(73/400 * 100%)"
+          }`,
+          right: `${
+            screenWidth >= 768 ? "calc(102/400 * 100%)" : "calc(10/400 * 100%)"
+          }`,
         }}
         onClick={() => {
           setCreditCount(creditCount + 10);
@@ -293,7 +322,9 @@ export default function Home() {
               }}
               onKeyDown={handleKeyDown}
               style={{
-                height: "calc(1/9 * 100%)",
+                height: `${
+                  screenWidth >= 768 ? "calc(1/9 * 100%)" : "calc(1/4*100%)"
+                } `,
                 top: `${pointerInputPosition.top}px`,
                 left: `${pointerInputPosition.left}px`,
                 //width: "calc(22/100 * 100%)",
@@ -307,10 +338,13 @@ export default function Home() {
           <LoadingType
             character={character}
             pointerInputPosition={pointerInputPosition}
+            screenWidth={screenWidth}
           />
         )}
         <LazyLoadImage
-          className="z-10 absolute top-0 left-0 w-full h-full object-cover"
+          className={`z-10 absolute top-0 left-0 w-full ${
+            screenWidth > 768 ? "h-full" : ""
+          } object-cover`}
           src={
             screenWidth > 768
               ? `/FINAL_SPACESHIP.png`
@@ -324,8 +358,16 @@ export default function Home() {
           <div
             className="z-0 absolute flex justify-center aspect-[16/9]"
             style={{
-              top: "calc(105/800 * 100%)",
-              height: "calc(115/300 * 100%)",
+              top: `${
+                screenWidth > 768
+                  ? "calc(105/800 * 100%)"
+                  : "calc(85/800 * 100%)"
+              } `,
+              height: `${
+                screenWidth > 768
+                  ? "calc(115/300 * 100%)"
+                  : "calc(55/300 * 100%)"
+              } `,
               left: "calc(101/200 * 100%)",
               transform: "translate(-50%)",
             }}
@@ -352,8 +394,16 @@ export default function Home() {
           <div
             className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
             style={{
-              top: "calc(102/800 * 100%)",
-              height: "calc(115/300 * 100%)",
+              top: `${
+                screenWidth > 768
+                  ? "calc(102/800 * 100%)"
+                  : "calc(85/800 * 100%)"
+              } `,
+              height: `${
+                screenWidth > 768
+                  ? "calc(115/300 * 100%)"
+                  : "calc(55/300 * 100%)"
+              } `,
               left: "calc(102/200 * 100%)",
               transform: "translate(-50%)",
             }}

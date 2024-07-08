@@ -4,9 +4,14 @@ import { TypeAnimation } from "react-type-animation";
 interface LoadingType {
   character: string;
   pointerInputPosition: any;
+  screenWidth: number;
 }
 
-function LoadingType({ character, pointerInputPosition }: LoadingType) {
+function LoadingType({
+  character,
+  pointerInputPosition,
+  screenWidth,
+}: LoadingType) {
   const [fontSize, setFontSize] = useState("");
   const [inputWidth, setInputWidth] = useState(0);
   const image = { width: 1920, height: 970 };
@@ -27,8 +32,11 @@ function LoadingType({ character, pointerInputPosition }: LoadingType) {
         scale = yScale;
         xOffset = (windowWidth - image.width * scale) / 2;
       }
-
-      setInputWidth(430 * scale + yOffset);
+      if (windowWidth > 768) {
+        setInputWidth(430 * scale + yOffset);
+      } else {
+        setInputWidth(215 * scale + yOffset);
+      }
     };
 
     updatePointer();
@@ -52,7 +60,9 @@ function LoadingType({ character, pointerInputPosition }: LoadingType) {
   return (
     <div
       style={{
-        height: "calc(1/9 * 100%)",
+        height: `${
+          screenWidth >= 768 ? "calc(1/9 * 100%)" : "calc(1/4*100%)"
+        } `,
         top: `${pointerInputPosition.top}px`,
         left: `${pointerInputPosition.left}px`,
         //width: "calc(22/100 * 100%)",
