@@ -38,9 +38,9 @@ export default function Home() {
 
   const image = { width: 1920, height: 970 };
   const target = { x: 1362, y: 150 };
-  const targetMobile = { x: 1140, y: 95 };
+  const targetMobile = { x: 1155, y: 105 };
   const targetInput = { x: 770, y: 760 };
-  const targetInputMobile = { x: 860, y: 530 };
+  const targetInputMobile = { x: 860, y: 630 };
   const targetVideo = { x: 500, y: 200 };
   const [pointerCreditPosition, setPointerCreditPosition] = useState({
     top: 0,
@@ -343,7 +343,7 @@ export default function Home() {
         )}
         <LazyLoadImage
           className={`z-10 absolute top-0 left-0 w-full ${
-            screenWidth > 768 ? "h-full" : ""
+            screenWidth > 768 ? "w-full" : ""
           } object-cover`}
           src={
             screenWidth > 768
