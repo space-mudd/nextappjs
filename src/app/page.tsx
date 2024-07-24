@@ -33,8 +33,10 @@ export default function Home() {
   const [character, setCharacter] = useState("");
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
   //"https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
-  const kaiVideoUrl = "https://zapbucket.s3.amazonaws.com/KAI_BLINKS.mp4";
-  const avaVideoUrl = "https://zapbucket.s3.amazonaws.com/AVA_BLINK.mp4";
+  const kaiVideoUrl =
+    "https://storage.googleapis.com/raygunbucket/KAI_BLINKS.mp4";
+  const avaVideoUrl =
+    "https://storage.googleapis.com/raygunbucket/AVA_BLINK.mp4";
 
   const image = { width: 1920, height: 970 };
   const target = { x: 1362, y: 150 };
@@ -342,7 +344,7 @@ export default function Home() {
           />
         )}
         <LazyLoadImage
-          className={`z-10 absolute top-0 left-0 w-full ${
+          className={`z-10 absolute top-0 left-0 h-full ${
             screenWidth > 768 ? "w-full" : ""
           } object-cover`}
           src={

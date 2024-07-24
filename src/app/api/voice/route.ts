@@ -178,8 +178,8 @@ whisper, one revelation at a time."
   const payload = {
     input_face:
       character === "AVA"
-        ? "https://zapbucket.s3.amazonaws.com/AVA_BLINK.mp4"
-        : "https://zapbucket.s3.amazonaws.com/KAI_BLINKS.mp4",
+        ? "https://storage.googleapis.com/raygunbucket/AVA_BLINK.mp4"
+        : "https://storage.googleapis.com/raygunbucket/KAI_BLINKS.mp4",
     input_audio: `https://storage.googleapis.com/${bucketName}/${fileDestination}`,
     selected_model: "Wav2Lip",
   };
