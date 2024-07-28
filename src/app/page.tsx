@@ -42,7 +42,7 @@ export default function Home() {
   const target = { x: 1362, y: 150 };
   const targetMobile = { x: 1170, y: 115 };
   const targetInput = { x: 770, y: 760 };
-  const targetInputMobile = { x: 860, y: 630 };
+  const targetInputMobile = { x: 860, y: 670 };
   const targetVideo = { x: 500, y: 200 };
   const [pointerCreditPosition, setPointerCreditPosition] = useState({
     top: 0,
@@ -363,7 +363,7 @@ export default function Home() {
               top: `${
                 screenWidth > 768
                   ? "calc(105/800 * 100%)"
-                  : "calc(85/800 * 100%)"
+                  : "calc(115/800 * 100%)"
               } `,
               height: `${
                 screenWidth > 768
