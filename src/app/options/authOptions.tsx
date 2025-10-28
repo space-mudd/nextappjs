@@ -1,36 +1,17 @@
 import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
-import { DynamoDB, DynamoDBClientConfig } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocument } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBAdapter } from "@next-auth/dynamodb-adapter";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { AuthOptions } from "next-auth";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { prisma } from "@/lib/prisma";
 import sendVerificationRequest from "./sendVerificationRequest";
-const config: DynamoDBClientConfig = {
-  credentials: {
-    accessKeyId: process.env.AUTH_DYNAMODB_ID || "",
-    secretAccessKey: process.env.AUTH_DYNAMODB_SECRET || "",
-  },
-  region: process.env.AUTH_DYNAMODB_REGION,
-};
-
-const client = DynamoDBDocument.from(new DynamoDB(config), {
-  marshallOptions: {
-    convertEmptyValues: true,
-    removeUndefinedValues: true,
-    convertClassInstanceToMap: true,
-  },
-});
 
 async function getUserCredit(userId: string) {
-  const command = new GetCommand({
-    TableName: "spacecraft",
-    Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
-  });
   try {
-    const result = await client.send(command);
-    return result.Item?.credit || 0;
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { credit: true },
+    });
+    return user?.credit || 0;
   } catch (error) {
     console.error("Error fetching user credit:", error);
     return 0;
@@ -38,7 +19,7 @@ async function getUserCredit(userId: string) {
 }
 
 export const authOptions: AuthOptions = {
-  adapter: DynamoDBAdapter(client),
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
@@ -47,12 +28,12 @@ export const authOptions: AuthOptions = {
     EmailProvider({
       server: process.env.EMAIL_SERVER,
       from: process.env.EMAIL_FROM,
-      sendVerificationRequest({
+      async sendVerificationRequest({
         identifier: email,
         url,
         provider: { server, from },
       }) {
-        sendVerificationRequest({
+        await sendVerificationRequest({
           identifier: email,
           url,
           provider: { server, from },

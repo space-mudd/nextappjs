@@ -12,7 +12,86 @@ import PaymentComponent from "@/components/PaymentComponent";
 
 export default function Home() {
   const { data: session } = useSession();
+  const containerRef = useRef<any>(null);
+  const [pointStyle, setPointStyle] = useState({ top: "0%", left: "0%" });
+  const [pointInputStyle, setPointInputStyle] = useState({
+    top: "0%",
+    left: "0%",
+  });
+  const [pointBtnStyle, setPointBtnStyle] = useState({
+    top: "0%",
+    left: "0%",
+  });
 
+  // Resmin orijinal boyutları
+  const originalImageWidth = 1920;
+  const originalImageHeight = 970;
+
+  // Noktanın orijinal resim üzerindeki koordinatları
+  const pointX = 1373; // X koordinatı (piksel cinsinden)
+  const pointY = 175; // Y koordinatı (piksel cinsinden)
+
+  const pointBtnX = 1373;
+  const pointBtnY = 325;
+
+  const pointInputX = 975;
+  const pointInputY = 740;
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+
+        // Ölçek faktörünü hesapla (objectFit: 'cover' için)
+        const scale = Math.max(
+          containerWidth / originalImageWidth,
+          containerHeight / originalImageHeight
+        );
+
+        // Ölçeklenmiş resmin boyutları
+        const displayedImageWidth = originalImageWidth * scale;
+        const displayedImageHeight = originalImageHeight * scale;
+
+        // Kırpılan kısımların offset değerleri
+        const offsetX = (displayedImageWidth - containerWidth) / 2;
+        const offsetY = (displayedImageHeight - containerHeight) / 2;
+
+        // Noktanın kapsayıcı içindeki pozisyonu
+        const pointXInContainer = pointX * scale - offsetX;
+        const pointYInContainer = pointY * scale - offsetY;
+
+        const pointInputXInContainer = pointInputX * scale - offsetX;
+        const pointInputYInContainer = pointInputY * scale - offsetY;
+
+        const pointBtnXInContainer = pointBtnX * scale - offsetX;
+        const pointBtnYInContainer = pointBtnY * scale - offsetY;
+        // Yüzde değerlerini hesapla
+        const newLeft = (pointXInContainer / containerWidth) * 100;
+        const newTop = (pointYInContainer / containerHeight) * 100;
+        const newInputLeft = (pointInputXInContainer / containerWidth) * 100;
+        const newInputTop = (pointInputYInContainer / containerHeight) * 100;
+        const newBtnLeft = (pointBtnXInContainer / containerWidth) * 100;
+        const newBtnTop = (pointBtnYInContainer / containerHeight) * 100;
+        setPointStyle({
+          top: `${newTop}%`,
+          left: `${newLeft}%`,
+        });
+
+        setPointInputStyle({
+          top: `${newInputTop}%`,
+          left: `${newInputLeft}%`,
+        });
+        setPointBtnStyle({
+          top: `${newBtnTop}%`,
+          left: `${newBtnLeft}%`,
+        });
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   const [screenWidth, setScreenWidth] = useState(0);
   const [inputText, setInputText] = useState("");
   const [videoMuted, setVideoMuted] = useState(true);
@@ -34,13 +113,13 @@ export default function Home() {
   //https://storage.googleapis.com/childrenstory-bucket/KAI30_small.mp4
   //"https://storage.googleapis.com/childrenstory-bucket/AVA30_GLITCH2.mp4"
   const kaiVideoUrl =
-    "https://storage.googleapis.com/raygunbucket/KAI_BLINKS.mp4";
+    "https://storage.googleapis.com/raygunastrology/KAI_BLINKS.mp4";
   const avaVideoUrl =
-    "https://storage.googleapis.com/raygunbucket/AVA_BLINK.mp4";
+    "https://storage.googleapis.com/raygunastrology/AVA_BLINK.mp4";
 
   const image = { width: 1920, height: 970 };
   const target = { x: 1362, y: 150 };
-  const targetMobile = { x: 1170, y: 115 };
+  const targetMobile = { x: 1470, y: 115 };
   const targetInput = { x: 770, y: 760 };
   const targetInputMobile = { x: 860, y: 670 };
   const targetVideo = { x: 500, y: 200 };
@@ -176,33 +255,88 @@ export default function Home() {
 
   const handleClick = async function () {
     setIsLoading(true);
-    const res = await fetch("/api/voice", {
-      method: "POST",
-      body: JSON.stringify({ inputText: inputText, character: character }),
-    });
-    const text = await res.text();
-    console.log("text:" + text);
-    setIsLoading(false);
-    setVideoUrl(text);
-    setVideoKey(Date.now());
+
+    try {
+      const res = await fetch("/api/voice", {
+        method: "POST",
+        body: JSON.stringify({ inputText: inputText, character: character }),
+      });
+
+      // Backend kredi kontrolü hatası
+      if (res.status === 403) {
+        setIsLoading(false);
+        setShowBuyCredit(true);
+        await getCredit(); // Güncel kredi sayısını çek
+        return;
+      }
+
+      if (res.status === 401) {
+        setIsLoading(false);
+        setShowForm(true);
+        return;
+      }
+
+      if (!res.ok) {
+        setIsLoading(false);
+        console.error("Voice API error:", await res.text());
+        return;
+      }
+
+      const text = await res.text();
+
+      const startGeneration = await fetch("/api/startGeneration", {
+        method: "POST",
+        body: JSON.stringify({ audioUrl: text, character: character }),
+      });
+
+      if (!startGeneration.ok) {
+        setIsLoading(false);
+        console.error(
+          "StartGeneration API error:",
+          await startGeneration.text()
+        );
+        return;
+      }
+
+      const obj = await startGeneration.json();
+      const statusUrl = await obj.status_url;
+
+      while (true) {
+        const newRes = await fetch("/api/statusGeneration", {
+          method: "POST",
+          body: JSON.stringify({ status_url: statusUrl }),
+        });
+        const newResJson = await newRes.json();
+        const curStatus = newResJson.status;
+        if (curStatus === "not yet") {
+          console.log("not yet");
+          await new Promise((resolve) => setTimeout(resolve, 5000));
+        } else {
+          console.log("succes:");
+          console.log(newResJson);
+          setVideoUrl(newResJson.output.output_video);
+          setVideoKey(Date.now());
+          setIsLoading(false);
+          break;
+        }
+      }
+    } catch (error) {
+      console.error("Generation error:", error);
+      setIsLoading(false);
+      await getCredit(); // Hata durumunda güncel kredi sayısını çek
+    }
   };
 
-  const decrementCredit = async function () {
-    setCreditCount(creditCount - 1);
-    const res = await fetch("/api/useCredit", {
-      method: "POST",
-      body: JSON.stringify({ userId: session?.user?.id }),
-    });
-  };
   const handleSubmit = async () => {
     if (!session) {
       setShowForm(true);
     } else {
       if (creditCount > 0) {
-        setCreditCount(creditCount - 1);
+        // Kredi düşürme işlemi backend'de (/api/voice) yapılıyor
         await handleClick();
         setInputText("");
-        await decrementCredit();
+        // Backend'den güncel kredi sayısını al
+        await getCredit();
       } else {
         setShowBuyCredit(true);
       }
@@ -286,174 +420,264 @@ export default function Home() {
   };
 
   return (
-    <div className="relative bg-black h-screen w-full">
-      <button
-        className="absolute z-20 bg-transparent text-transparent top-0"
-        style={{
-          width: screenWidth >= 768 ? "calc(1/18 * 100%)" : "calc(2/18 * 100%)",
-          height:
-            screenWidth >= 768 ? "calc(1/18 * 100%)" : "calc(1/36 * 100%)",
-          top: `${
-            screenWidth >= 768 ? "calc(116/400 * 100%)" : "calc(73/400 * 100%)"
-          }`,
-          right: `${
-            screenWidth >= 768 ? "calc(102/400 * 100%)" : "calc(10/400 * 100%)"
-          }`,
-        }}
-        onClick={() => {
-          setCreditCount(creditCount + 10);
-          //addCredit();
-          //setCreditCount(creditCount + 1);
-          if (session) {
-            setShowBuyCredit(true);
-          } else {
-            setShowForm(true);
-          }
-        }}
-      >
-        token
-      </button>
-      <div className="relative w-full h-screen">
-        {!isLoading ? (
-          <form onSubmit={handleSubmit}>
-            <textarea
-              placeholder={`${session ? "ASK A QUESTION" : "ASK A QUESTION"}`}
-              value={inputText}
-              onChange={(e) => {
-                setInputText(e.target.value);
-              }}
-              onKeyDown={handleKeyDown}
-              style={{
-                height: `${
-                  screenWidth >= 768 ? "calc(1/9 * 100%)" : "calc(1/4*100%)"
-                } `,
-                top: `${pointerInputPosition.top}px`,
-                left: `${pointerInputPosition.left}px`,
-                //width: "calc(22/100 * 100%)",
-                width: `${inputWidth}px`,
-                fontSize: `${inputFontSize}`,
-              }}
-              className="absolute top-3/4 -translate-y-2/3 tracking-widest bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-hidden"
+    <div className="overflow-y-hidden overflow-x-auto">
+      <div className="relative bg-black xxl:w-full xl:w-[calc((1970/970)*100dvh)] md:w-[calc((1324/970)*100dvh)] h-[calc(100dvh)] overflow-y-hidden">
+        <div className="relative main_container xxl:w-full xl:w-[calc((1970/970)*100dvh)] md:w-[calc((1324/970)*100dvh)] w-[calc((1080/1920)*100dvh)] h-[calc(100dvh)] overflow-y-hidden">
+          {!isLoading ? (
+            <form onSubmit={handleSubmit}>
+              <textarea
+                placeholder={`${session ? "ASK A QUESTION" : "ASK A QUESTION"}`}
+                value={inputText}
+                onFocus={() => {
+                  if (!session) {
+                    setShowForm(true);
+                  }
+                }}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                }}
+                onKeyDown={handleKeyDown}
+                style={{
+                  height: `${
+                    screenWidth >= 768
+                      ? "calc(1/9 * 100%)"
+                      : screenWidth > 639 && screenWidth < 768
+                      ? "calc(13%)"
+                      : "calc(1/4*100%)"
+                  } `,
+                  top: `${
+                    screenWidth >= 768
+                      ? pointInputStyle.top
+                      : screenWidth > 639 && screenWidth < 768
+                      ? "calc(0.63 * 122dvh)"
+                      : "calc(189 / 300 * 100dvh)"
+                  }`,
+                  left: `${
+                    screenWidth >= 768
+                      ? pointInputStyle.left
+                      : screenWidth > 639 && screenWidth < 768
+                      ? "calc(0.266667 * 159dvh)"
+                      : "calc(8/30*100dvh)"
+                  }`,
+                  transform: "translate(-50%, -50%)",
+                  //width: "calc(22/100 * 100%)",
+                  width:
+                    screenWidth >= 768
+                      ? `${inputWidth}px`
+                      : screenWidth > 639 && screenWidth < 768
+                      ? "273.309px"
+                      : `${inputWidth}px`,
+                  fontSize:
+                    screenWidth >= 768
+                      ? `${inputFontSize}`
+                      : screenWidth > 639 && screenWidth < 768
+                      ? "17.5914px"
+                      : `${inputFontSize}`,
+                }}
+                className="absolute -translate-y-2/3 tracking-widest bg-transparent border-none outline-none focus:border-none focus:outline-none text-white z-30 resize-none overflow-y-hidden"
+              />
+            </form>
+          ) : (
+            <LoadingType
+              character={character}
+              pointerInputPosition={pointInputStyle}
+              screenWidth={screenWidth}
             />
-          </form>
-        ) : (
-          <LoadingType
-            character={character}
-            pointerInputPosition={pointerInputPosition}
-            screenWidth={screenWidth}
+          )}
+          <div
+            ref={containerRef}
+            className="relative z-20 sm:block hidden h-screen overflow-hidden"
+          >
+            <LazyLoadImage
+              className="z-20 w-full h-full object-cover"
+              src="/FINAL_SPACESHIP_FIX.png"
+              alt="SPACESHIP"
+            />
+
+            <div
+              className="z-20 absolute text-red-600"
+              style={{
+                top: pointStyle.top,
+                left: pointStyle.left,
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              {fontSize ? (
+                <p
+                  className="text-xl sm:flex hidden"
+                  style={{ fontSize: fontSize }}
+                >
+                  {creditCount > 9 ? creditCount : `0${creditCount}`}
+                </p>
+              ) : (
+                ""
+              )}
+            </div>
+          </div>
+          <LazyLoadImage
+            className={`mobile-image z-10 absolute top-0 left-0 h-full sm:hidden flex object-cover`}
+            src={"/MOBILE_BACKGROUND.png"}
+            alt="background"
+            style={{ objectFit: "cover" }}
+          />
+
+          {videoUrl && !videoURLs.includes(videoUrl) ? (
+            <div
+              className="z-0 absolute flex justify-center aspect-[16/9]"
+              style={{
+                top: `${
+                  screenWidth > 768
+                    ? "calc(105/800 * 100%)"
+                    : screenWidth >= 640
+                    ? "calc(17%)"
+                    : "calc(6%)"
+                } `,
+                height: `${
+                  screenWidth > 768
+                    ? "calc(115/300 * 100%)"
+                    : screenWidth >= 640
+                    ? "calc(32.6667%)"
+                    : "calc(28.6667%)"
+                } `,
+                left: `${
+                  screenWidth > 768
+                    ? "calc(101/200 * 100%)"
+                    : screenWidth >= 640
+                    ? "calc(51.5%)"
+                    : "calc(49.5%)"
+                }`,
+                transform: "translate(-50%)",
+              }}
+            >
+              <video
+                ref={videoRef}
+                key={videoKey}
+                muted={false}
+                className={`h-full w-full`}
+                autoPlay
+                playsInline
+                loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
+                preload="auto"
+                onEnded={handleVideoEnd}
+              >
+                <source src={videoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          ) : (
+            ""
+          )}
+          {videoUrl && videoURLs.includes(videoUrl) ? (
+            <div
+              className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
+              style={{
+                top: `${
+                  screenWidth > 768
+                    ? "calc(102/800 * 100%)"
+                    : "calc(112/800 * 100%)"
+                } `,
+                height: `${
+                  screenWidth > 768
+                    ? "calc(115/300 * 100%)"
+                    : "calc(62/300 * 100%)"
+                } `,
+                left: `${
+                  screenWidth > 768
+                    ? "calc(101/200 * 100%)"
+                    : "calc(98/200 * 100%)"
+                } `,
+                transform: "translate(-50%)",
+              }}
+            >
+              <video
+                ref={videoRef}
+                key={videoKey}
+                muted={videoMuted}
+                className={`h-full w-full`}
+                autoPlay
+                playsInline
+                loop={true}
+                preload="none"
+              >
+                <source src={videoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          ) : (
+            ""
+          )}
+        </div>
+        <div>
+          {fontSize ? (
+            <p
+              className="small-color z-20 md:hidden absolute flex justify-center mb-8 text-red-600 xl:top-[calc(110/800*100dvh)] md:top-[calc(120/800*100dvh)] top-[calc(104/800*100dvh)] md:left-[calc(160/200*100%)] xxl:left-[calc(1417/2000*100%)] left-[calc(103/200*100dvh)]"
+              style={{
+                fontSize: screenWidth < 640 ? "21.9892px" : fontSize,
+                top:
+                  screenWidth < 640
+                    ? `${32 + (640 - screenWidth) * 0.5}px`
+                    : undefined,
+                left: screenWidth < 640 ? "96.1913%" : undefined,
+                transform:
+                  screenWidth < 640 ? "translate(-50%, -50%)" : undefined,
+              }}
+            >
+              {creditCount > 9 ? creditCount : `0${creditCount}`}
+            </p>
+          ) : (
+            ""
+          )}
+          {fontSize ? (
+            <button
+              className="absolute z-50 bg-black bg-transparent text-transparent"
+              style={{
+                top:
+                  screenWidth >= 768
+                    ? pointBtnStyle.top
+                    : `calc(194/800*100dvh)`,
+                left:
+                  screenWidth >= 768
+                    ? pointBtnStyle.left
+                    : `calc(106/200*100dvh)`,
+                transform: "translate(-50%, -50%)",
+
+                width:
+                  screenWidth >= 768
+                    ? "calc(1/18 * 100%)"
+                    : "calc(2/18 * 100%)",
+                height:
+                  screenWidth >= 768
+                    ? "calc(1/18 * 100%)"
+                    : "calc(1/36 * 100%)",
+              }}
+              onClick={() => {
+                //addCredit();
+                //setCreditCount(creditCount + 1);
+                if (session) {
+                  setShowBuyCredit(true);
+                } else {
+                  setShowForm(true);
+                }
+              }}
+            >
+              token
+            </button>
+          ) : (
+            ""
+          )}
+        </div>
+        {showForm && (
+          <SignInForm showForm={showForm} setShowForm={setShowForm} />
+        )}
+        {showBuyCredit && (
+          <BuyCredit
+            showBuyCredit={showBuyCredit}
+            setShowBuyCredit={setShowBuyCredit}
+            creditCount={creditCount}
+            setCreditCount={setCreditCount}
           />
         )}
-        <LazyLoadImage
-          className={`z-10 absolute top-0 left-0 h-full ${
-            screenWidth > 768 ? "w-full" : ""
-          } object-cover`}
-          src={
-            screenWidth > 768
-              ? `/FINAL_SPACESHIP.png`
-              : `/SPACESHIP_MOBILE_BACKGROUND.png`
-          }
-          alt="background"
-          style={{ objectFit: "cover" }}
-        />
-
-        {videoUrl && !videoURLs.includes(videoUrl) ? (
-          <div
-            className="z-0 absolute flex justify-center aspect-[16/9]"
-            style={{
-              top: `${
-                screenWidth > 768
-                  ? "calc(105/800 * 100%)"
-                  : "calc(115/800 * 100%)"
-              } `,
-              height: `${
-                screenWidth > 768
-                  ? "calc(115/300 * 100%)"
-                  : "calc(55/300 * 100%)"
-              } `,
-              left: "calc(101/200 * 100%)",
-              transform: "translate(-50%)",
-            }}
-          >
-            <video
-              ref={videoRef}
-              key={videoKey}
-              muted={videoMuted}
-              className={`h-full w-full `}
-              autoPlay
-              playsInline
-              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
-              preload="none"
-              onEnded={handleVideoEnd}
-            >
-              <source src={videoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        ) : (
-          ""
-        )}
-        {videoUrl && videoURLs.includes(videoUrl) ? (
-          <div
-            className="z-0 absolute left-1/2 -translate-x-1/2 flex justify-center aspect-[16/9]"
-            style={{
-              top: `${
-                screenWidth > 768
-                  ? "calc(102/800 * 100%)"
-                  : "calc(85/800 * 100%)"
-              } `,
-              height: `${
-                screenWidth > 768
-                  ? "calc(115/300 * 100%)"
-                  : "calc(55/300 * 100%)"
-              } `,
-              left: "calc(102/200 * 100%)",
-              transform: "translate(-50%)",
-            }}
-          >
-            <video
-              ref={videoRef}
-              key={videoKey}
-              muted={videoMuted}
-              className={`h-full w-full`}
-              autoPlay
-              playsInline
-              loop={videoUrl === avaVideoUrl || videoUrl === kaiVideoUrl}
-              preload="none"
-              onEnded={handleVideoEnd}
-            >
-              <source src={videoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        ) : (
-          ""
-        )}
       </div>
-      <div>
-        {fontSize ? (
-          <p
-            className="z-20 absolute flex justify-center mb-8 text-red-600"
-            style={{
-              top: `${pointerCreditPosition.top}px`,
-              left: `${pointerCreditPosition.left}px`,
-              fontSize: fontSize,
-            }}
-          >
-            {creditCount > 9 ? creditCount : `0${creditCount}`}
-          </p>
-        ) : (
-          ""
-        )}
-      </div>
-      {showForm && <SignInForm showForm={showForm} setShowForm={setShowForm} />}
-      {showBuyCredit && (
-        <BuyCredit
-          showBuyCredit={showBuyCredit}
-          setShowBuyCredit={setShowBuyCredit}
-          creditCount={creditCount}
-          setCreditCount={setCreditCount}
-        />
-      )}
     </div>
   );
 }

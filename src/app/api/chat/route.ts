@@ -27,7 +27,7 @@ decode the language of the cosmos, and procure knowledge that could propel civil
 eras of enlightenment.
 The ship's hull, forged of eldritch materials and lined with the principles of quantum entanglement,
 housed the Grand Library of Epochs—a reservoir of accumulated wisdom that encapsulated all
-known information until its unforeseen demise in the year 2023. Its content ranged from the
+known information until its unforeseen demise in the year 2025. Its content ranged from the
 fundamental structure of quantum particles to the esoteric musings of interstellar consciousness.
 Legend has it that on an eerily quiet night, when the whirling dance of auroras painted the skies with
 otherworldly hues, SKVLL slid silently through Earth's atmosphere and crashed into an undisclosed
@@ -119,8 +119,8 @@ whisper, one revelation at a time."
   const payload = {
     input_face:
       character === "AVA"
-        ? "https://storage.googleapis.com/childrenstory-bucket/AVA_BLINK.mp4"
-        : "https://storage.googleapis.com/childrenstory-bucket/KAI_BLINKS.mp4",
+        ? "https://storage.googleapis.com/raygunastrology/AVA_BLINK.mp4"
+        : "https://storage.googleapis.com/raygunastrology/KAI_BLINKS.mp4",
     text_prompt: content,
     tts_provider: "GOOGLE_TTS",
     google_voice_name:

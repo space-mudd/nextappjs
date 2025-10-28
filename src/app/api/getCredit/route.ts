@@ -1,15 +1,5 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { GetCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { NextRequest } from "next/server";
-
-const client = new DynamoDBClient({
-  credentials: {
-    accessKeyId: process.env.AUTH_DYNAMODB_ID || "",
-    secretAccessKey: process.env.AUTH_DYNAMODB_SECRET || "",
-  },
-  region: process.env.AUTH_DYNAMODB_REGION || "",
-});
-const ddbDocClient = DynamoDBDocumentClient.from(client);
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -19,16 +9,15 @@ export async function POST(req: NextRequest) {
     return new Response("User ID is required", { status: 400 });
   }
 
-  const command = new GetCommand({
-    TableName: "spacecraft",
-    Key: { pk: `USER#${userId}`, sk: `USER#${userId}` },
-  });
-
   try {
-    const result = await ddbDocClient.send(command);
-    console.log(result!.Item!.credit);
-    if (result.Item) {
-      return new Response(JSON.stringify({ credit: result.Item.credit }));
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { credit: true },
+    });
+
+    console.log(user?.credit);
+    if (user) {
+      return new Response(JSON.stringify({ credit: user.credit }));
     } else {
       return new Response("User not found", { status: 404 });
     }
