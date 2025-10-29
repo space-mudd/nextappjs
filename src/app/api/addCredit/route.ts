@@ -1,18 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export const runtime = "nodejs"; // Ensures Prisma works on Vercel’s Node runtime
-export const dynamic = "force-dynamic"; // Avoids static build issues
-
 export async function POST(req: NextRequest) {
+  const body = await req.json();
+  const userId = body.userId;
+  const requestedCredit = body.requestedCredit;
+
   try {
-    const body = await req.json();
-    const { userId, requestedCredit } = body;
-
-    if (!userId) {
-      return NextResponse.json({ message: "Missing userId" }, { status: 400 });
-    }
-
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -23,15 +17,17 @@ export async function POST(req: NextRequest) {
       select: { credit: true },
     });
 
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         message: "Credit added successfully",
         newCreditTotal: user.credit,
-      },
+      }),
       { status: 200 }
     );
   } catch (error) {
     console.error("Prisma error:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    return new Response(JSON.stringify({ message: "Internal Server Error" }), {
+      status: 500,
+    });
   }
 }
