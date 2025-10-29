@@ -21,12 +21,26 @@ const openai = new OpenAI({
 });
 
 const bucketName = "raygunastrology";
-const storage = new Storage({
-  projectId: process.env.PROJECT_ID,
-  credentials: JSON.parse(
-    process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON || ""
-  ),
-});
+let storage: Storage | null = null;
+
+function getStorage() {
+  if (!storage) {
+    try {
+      const creds = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON
+        ? JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON)
+        : undefined;
+
+      storage = new Storage({
+        projectId: process.env.PROJECT_ID,
+        credentials: creds,
+      });
+    } catch (err) {
+      console.error("Google Storage initialization failed:", err);
+      throw new Error("Invalid GOOGLE_APPLICATION_CREDENTIALS_JSON format");
+    }
+  }
+  return storage;
+}
 
 export async function POST(req: NextRequest) {
   // 1. Authentication kontrolü
@@ -195,7 +209,7 @@ whisper, one revelation at a time."
   const fileName = `output-${uuidv4()}.mp3`;
   const fileDestination = `${fileName}`;
 
-  const file = storage.bucket(bucketName).file(fileDestination);
+  const file = getStorage().bucket(bucketName).file(fileDestination);
 
   await file.save(audioBuffer, {
     metadata: {
