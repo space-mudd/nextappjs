@@ -421,8 +421,8 @@ export default function Home() {
 
   return (
     <div className="overflow-y-hidden overflow-x-auto">
-      <div className="relative bg-black xxl:w-full xl:w-[calc((1970/970)*100dvh)] md:w-[calc((1324/970)*100dvh)] h-[calc(100dvh)] overflow-y-hidden">
-        <div className="relative main_container xxl:w-full xl:w-[calc((1970/970)*100dvh)] md:w-[calc((1324/970)*100dvh)] w-[calc((1080/1920)*100dvh)] h-[calc(100dvh)] overflow-y-hidden">
+      <div className="relative bg-black w-full h-[calc(100dvh)] overflow-y-hidden">
+        <div className="relative main_container w-full h-[calc(100dvh)] overflow-y-hidden">
           {!isLoading ? (
             <form onSubmit={handleSubmit}>
               <textarea
