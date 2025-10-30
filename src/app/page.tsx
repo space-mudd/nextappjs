@@ -457,7 +457,7 @@ export default function Home() {
                       ? pointInputStyle.left
                       : screenWidth > 639 && screenWidth < 768
                       ? "calc(0.266667 * 159dvh)"
-                      : "calc(8/30*100dvh)"
+                      : "calc(8/30*123dvh)"
                   }`,
                   transform: "translate(-50%, -50%)",
                   //width: "calc(22/100 * 100%)",
@@ -617,7 +617,7 @@ export default function Home() {
                   screenWidth < 640
                     ? `${32 + (640 - screenWidth) * 0.5}px`
                     : undefined,
-                left: screenWidth < 640 ? "96.1913%" : undefined,
+                left: screenWidth < 640 ? "93.1913%" : undefined,
                 transform:
                   screenWidth < 640 ? "translate(-50%, -50%)" : undefined,
               }}
