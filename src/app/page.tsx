@@ -22,7 +22,7 @@ export default function Home() {
     top: "0%",
     left: "0%",
   });
-
+  console.log("all");
   // Resmin orijinal boyutları
   const originalImageWidth = 1920;
   const originalImageHeight = 970;
